@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 import enum
 import uuid
 from datetime import datetime,timezone
+from app.core.timezone import utc_now
 
 from app.core.database import Base
 class AccountType(str, enum.Enum):
@@ -22,8 +23,11 @@ class BankAccount(Base):
     ifsc_code = Column(String(11), nullable=False)
     is_verified = Column(Boolean, default=False)
     is_primary = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
+    created_at = Column(DateTime, default=utc_now)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
     # Relationship - connects back to user
     user = relationship("User", backref="bank_accounts")
+
+    
+

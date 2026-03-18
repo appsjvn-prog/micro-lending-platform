@@ -1,5 +1,9 @@
+# Only import what's absolutely necessary for other modules
 from app.schemas.user import (
-    UserBase, UserCreate, UserUpdate, UserResponse
+    UserBase, UserCreate, UserUpdate, UserResponse,
+    UserRegisterRequest, SetPasswordRequest,  # Add these
+    UserAdminListResponse, UserAdminDetailResponse,
+    PhoneNumber
 )
 from app.schemas.bank_account import (
     BankAccountBase, BankAccountCreate, BankAccountUpdate, 

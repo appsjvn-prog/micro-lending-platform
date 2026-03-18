@@ -27,6 +27,11 @@ from app.models.user import User
 from app.models.bank_account import BankAccount
 from app.models.loan_product import LoanProduct
 from app.models.otp import OTPVerification
+from app.models.user_profile import UserProfile
+
+from app.models.address import Address
+from app.models.borrower_profile import BorrowerProfile
+from app.models.lender_profile import LenderProfile
 
 target_metadata = Base.metadata
 

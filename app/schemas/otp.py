@@ -1,38 +1,36 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import Optional
 from datetime import datetime
 from uuid import UUID
 
 from app.models.otp import OTPPurpose
+from app.schemas.user import PhoneNumber
 
 # ---------- Send OTP Request ----------
 class OTPSendRequest(BaseModel):
     channel: str = Field(..., pattern="^(email|phone)$", description="Channel to send OTP: email or phone")
     email: Optional[EmailStr] = None
-    phone: Optional[str] = Field(None, pattern=r'^\+\d{10,15}$')
+    phone: Optional[PhoneNumber] = None
     purpose: OTPPurpose
 
-    def validate_channel_data(self):
-        if self.channel == "email" and not self.email:
+    @field_validator('channel')
+    def validate_channel_data(cls, v, info):
+        """Validate that email/phone is provided based on channel"""
+        if v == "email" and not info.data.get('email'):
             raise ValueError("Email is required when channel is email")
-        if self.channel == "phone" and not self.phone:
+        if v == "phone" and not info.data.get('phone'):
             raise ValueError("Phone is required when channel is phone")
-        return self
+        return v
 
 # ---------- Verify OTP Request ----------
 class OTPVerifyRequest(BaseModel):
-    channel: str = Field(..., pattern="^(email|phone)$")
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = Field(None, pattern=r'^\+\d{10,15}$')
+    user_id: UUID
     otp_code: str = Field(..., min_length=4, max_length=6)
-    purpose: OTPPurpose
 
 # ---------- Resend OTP Request ----------
 class OTPResendRequest(BaseModel):
-    channel: str = Field(..., pattern="^(email|phone)$")
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = Field(None, pattern=r'^\+\d{10,15}$')
-    purpose: OTPPurpose
+   
+    phone: PhoneNumber  # Make required, not optional
 
 # ---------- OTP Response ----------
 class OTPSendResponse(BaseModel):
@@ -43,4 +41,5 @@ class OTPVerifyResponse(BaseModel):
     verified: bool
     message: str
     user_id: Optional[UUID] = None
-    access_token: Optional[str] = None  # For future JWT implementation
+    temp_token: Optional[str] = None  
+    access_token: Optional[str] = None

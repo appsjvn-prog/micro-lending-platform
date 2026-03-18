@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime, timezone
 
 from app.core.database import Base
+from app.core.timezone import utc_now   
 
 class InterestType(str, enum.Enum):
     FLAT = "FLAT"
@@ -39,5 +40,5 @@ class LoanProduct(Base):
     status = Column(Enum(LoanProductStatus), nullable=False, default=LoanProductStatus.ACTIVE)
     
     # Timestamps
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=utc_now)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)

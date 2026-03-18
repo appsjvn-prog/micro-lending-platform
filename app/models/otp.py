@@ -1,14 +1,9 @@
-"""
-🔜 WEEK 3 FEATURE - Authentication & OTP
-This module is part of the authentication flow.
-Not required for Week 2 deliverables (Bank Accounts & Loan Products).
-Kept for implementation in Week 3.
-"""
+
 from sqlalchemy import Column, String, Enum, Boolean, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 import enum
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.core.database import Base
 
@@ -26,7 +21,8 @@ class OTPVerification(Base):
     email = Column(String(255), nullable=True)
     phone = Column(String(20), nullable=True)
     purpose = Column(Enum(OTPPurpose), nullable=False)
-    otp_code = Column(String(6), nullable=False)
-    expires_at = Column(DateTime, nullable=False, default=lambda: datetime.utcnow() + timedelta(minutes=5))
+    otp_hash = Column(String(255), nullable=False)
     is_used = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    expires_at = Column(DateTime(timezone=True), nullable=False, 
+                    default=lambda: datetime.now(timezone.utc) + timedelta(minutes=5))

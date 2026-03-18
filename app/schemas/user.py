@@ -155,3 +155,33 @@ class UserRegisterRequest(BaseModel):
             except Exception as e:
                 raise ValueError(f'Invalid phone number format: {str(e)}')
         return v
+
+class SetPasswordRequest(BaseModel):
+    """Set password after OTP verification"""
+    token: str = Field(..., description="Temporary token from OTP verification")
+    password: str = Field(..., min_length=8, max_length=50)
+    confirm_password: str = Field(..., min_length=8, max_length=50)
+
+    @field_validator('password')
+    def validate_password(cls, v):
+        """Basic password strength validation"""
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters')
+        if len(v) > 50:
+            raise ValueError('Password must be at most 50 characters')
+        if not any(c.isupper() for c in v):
+            raise ValueError('Password must contain at least one uppercase letter')
+        if not any(c.islower() for c in v):
+            raise ValueError('Password must contain at least one lowercase letter')
+        if not any(c.isdigit() for c in v):
+            raise ValueError('Password must contain at least one digit')
+        return v
+
+    @model_validator(mode='after')
+    def validate_passwords_match(self):
+        if self.password != self.confirm_password:
+            raise ValueError('Passwords do not match')
+        return self
+    
+UserRegisterRequest.model_rebuild()
+SetPasswordRequest.model_rebuild()    
