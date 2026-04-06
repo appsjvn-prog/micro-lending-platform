@@ -6,8 +6,9 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 from app.core.database import Base
+from app.core.enums import CaseInsensitiveEnum
 
-class OTPPurpose(str, enum.Enum):
+class OTPPurpose(CaseInsensitiveEnum):
     REGISTRATION = "REGISTRATION"
     LOGIN = "LOGIN"
     PASSWORD_RESET = "PASSWORD_RESET"

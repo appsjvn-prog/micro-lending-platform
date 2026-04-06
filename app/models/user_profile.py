@@ -9,22 +9,24 @@ from datetime import datetime
 
 from app.core.database import Base
 from app.core.timezone import utc_now
+from app.models.base import AuditMixin
+from app.core.enums import CaseInsensitiveEnum
 
 # Enum for Gender
-class Gender(str, enum.Enum):
+class Gender(CaseInsensitiveEnum):
     MALE = "MALE"
     FEMALE = "FEMALE"
     OTHER = "OTHER"
     PREFER_NOT_TO_SAY = "PREFER_NOT_TO_SAY"
 
 # Enum for Marital Status
-class MaritalStatus(str, enum.Enum):
-    SINGLE = "single"
-    MARRIED = "married"
-    DIVORCED = "divorced"
-    WIDOWED = "widowed"
+class MaritalStatus(CaseInsensitiveEnum):
+    SINGLE = "SINGLE"
+    MARRIED = "MARRIED"
+    DIVORCED = "DIVORCED"
+    WIDOWED = "WIDOWED"
 
-class UserProfile(Base):
+class UserProfile(Base, AuditMixin):
     __tablename__ = "user_profile"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -91,5 +93,5 @@ class UserProfile(Base):
             self.alternate_national_number = value.get("national_number")
 
     # Relationships
-    user = relationship("User", back_populates="profile")
-    addresses = relationship("Address", back_populates="user_profile", cascade="all, delete-orphan")
+    user = relationship("User", foreign_keys="UserProfile.user_id", back_populates="profile")
+    addresses = relationship("Address",back_populates="user_profile", cascade="all, delete-orphan")

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Float, ForeignKey, Enum, DateTime, Boolean
+from sqlalchemy import Column, String, Integer, Numeric, ForeignKey, Enum, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -7,15 +7,17 @@ from datetime import datetime
 
 from app.core.database import Base
 from app.core.timezone import utc_now
+from app.models.base import AuditMixin
+from app.core.enums import CaseInsensitiveEnum
 
-class EmploymentType(str, enum.Enum):
+class EmploymentType(CaseInsensitiveEnum):
     SALARIED = "SALARIED"
     SELF_EMPLOYED = "SELF_EMPLOYED"
     BUSINESS = "BUSINESS"
     STUDENT = "STUDENT"
     UNEMPLOYED = "UNEMPLOYED"
 
-class BorrowerProfile(Base):
+class BorrowerProfile(Base, AuditMixin):
     __tablename__ = "borrower_profiles"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -23,23 +25,21 @@ class BorrowerProfile(Base):
     
     # Employment Info (required for loan eligibility)
     employment_type = Column(Enum(EmploymentType), nullable=False)
-    monthly_income = Column(Float, nullable=False)
+    monthly_income = Column(Numeric(10, 2), nullable=False)
     employer_name = Column(String(100), nullable=True)
     
     # Work Experience
     current_job_tenure_months = Column(Integer, nullable=True)  # Months in current job
     total_work_experience_years = Column(Integer, nullable=True)
     
-    # Loan Preferences (what borrower is looking for)
-    preferred_min_amount = Column(Float, nullable=True)
-    preferred_max_amount = Column(Float, nullable=True)
-    preferred_tenure_months = Column(Integer, nullable=True)
-    preferred_max_interest_rate = Column(Float, nullable=True)
-    
     # Financial Health (will be updated by system)
-    credit_score = Column(Integer, nullable=True)  # 300-900
-    existing_loan_count = Column(Integer, default=0)
-    total_existing_liabilities = Column(Float, default=0)
+    # credit_score = Column(Integer, nullable=True)  # 300-900
+    # existing_loan_count = Column(Integer, default=0)
+    # total_existing_liabilities = Column(Float, default=0)
+    
+    risk_score = Column(Integer, nullable=True)  # Store latest risk score
+    risk_level = Column(String(20), nullable=True)  # LOW, MEDIUM, HIGH
+    last_risk_calculation = Column(DateTime, nullable=True) # When last calculated
     
     # Status
     is_profile_complete = Column(Boolean, default=False)
@@ -47,5 +47,5 @@ class BorrowerProfile(Base):
     updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
     
     # Relationships
-    user = relationship("User", back_populates="borrower_profile")
-    # loan_applications = relationship("LoanApplication", back_populates="borrower")
+    user = relationship("User", foreign_keys=[user_id], back_populates="borrower_profile")
+    

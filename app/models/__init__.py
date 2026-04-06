@@ -2,7 +2,7 @@
 
 from .user import User, UserRole, UserStatus
 from .bank_account import BankAccount, AccountType
-from .loan_product import LoanProduct, LoanProductStatus, InterestType
+from .loan_product import LoanProduct, LoanProductStatus, InterestType, RepaymentFrequency, RepaymentDaySource  
 from .otp import OTPVerification, OTPPurpose
 from .user_profile import UserProfile, Gender, MaritalStatus
 from .address import Address, AddressType
@@ -10,6 +10,10 @@ from .borrower_profile import BorrowerProfile, EmploymentType
 from .lender_profile import LenderProfile, RiskAppetite, LenderStatus
 from .loan_offer import LoanOffer, LoanOfferStatus
 from .loan_application import LoanApplication, LoanApplicationStatus
+from .kyc import KYC, KYCStatus, KYCDocument, KYCDocumentType
+from .loan import Loan, LoanStatus
+from .repayment_schedule import RepaymentSchedule, RepaymentStatus
+
 
 __all__ = [
     'User', 'UserRole', 'UserStatus',
@@ -21,5 +25,10 @@ __all__ = [
     'BorrowerProfile', 'EmploymentType',
     'LenderProfile', 'RiskAppetite', 'LenderStatus',
     'LoanOffer', 'LoanOfferStatus',
-    'LoanApplication', 'LoanApplicationStatus'
+    'LoanApplication', 'LoanApplicationStatus',
+    'KYC', 'KYCStatus', 'KYCDocument', 'KYCDocumentType',
+    'Loan', 'LoanStatus',
+    'RepaymentSchedule', 'RepaymentStatus',
+    'RepaymentFrequency', 'RepaymentDaySource'
+    
 ]

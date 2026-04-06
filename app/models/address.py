@@ -6,16 +6,18 @@ import enum
 from datetime import datetime
 
 from app.core.database import Base
+from app.models.base import AuditMixin
 from app.core.timezone import utc_now
+from app.core.enums import CaseInsensitiveEnum
 
 
 
-class AddressType(str, enum.Enum):
+class AddressType(CaseInsensitiveEnum):
     HOME = "HOME"
     WORK = "WORK"
     PERMANENT = "PERMANENT"
 
-class Address(Base):
+class Address(Base, AuditMixin):
     __tablename__ = "addresses"
     
 

@@ -1,28 +1,31 @@
-from sqlalchemy import Column, String, Enum, DateTime, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, String, Enum, DateTime, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 import enum
 import uuid
 from datetime import datetime, timezone
-
+from app.models.base import AuditMixin
+from app.models.borrower_profile import BorrowerProfile
+from app.models.lender_profile import LenderProfile
 
 
 from app.core.database import Base
 from app.core.security import get_password_hash
 from app.models.loan_offer import LoanOffer
+from app.core.enums import CaseInsensitiveEnum
 
-class UserRole(str, enum.Enum):
+class UserRole(CaseInsensitiveEnum):
     BORROWER = "BORROWER"
     LENDER = "LENDER"
     ADMIN = "ADMIN"
 
-class UserStatus(str, enum.Enum):
+class UserStatus(CaseInsensitiveEnum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
     BLOCKED = "BLOCKED"
     SUSPENDED = "SUSPENDED"
 
-class User(Base):
+class User(Base, AuditMixin):
     __tablename__ = "users"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -38,10 +41,22 @@ class User(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    profile = relationship("UserProfile", back_populates="user", uselist=False)
-    borrower_profile = relationship("BorrowerProfile", back_populates="user", uselist=False)
-    lender_profile = relationship("LenderProfile", back_populates="user", uselist=False)
-    loan_offers = relationship("LoanOffer", back_populates="lender", cascade="all, delete-orphan")
+    profile = relationship("UserProfile", foreign_keys='UserProfile.user_id', back_populates="user", uselist=False)
+    borrower_profile = relationship("BorrowerProfile", foreign_keys=[BorrowerProfile.user_id], back_populates="user", uselist=False)
+    lender_profile = relationship("LenderProfile", foreign_keys=[LenderProfile.user_id], back_populates="user", uselist=False)
+    loan_offers = relationship("LoanOffer", foreign_keys=[LoanOffer.lender_id], back_populates="lender", cascade="all, delete-orphan")
+    kyc = relationship("KYC", foreign_keys="[KYC.user_id]", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    loan_applications = relationship("LoanApplication", 
+                                    foreign_keys="[LoanApplication.borrower_id]",
+                                    back_populates="borrower")
+    bank_accounts = relationship("BankAccount", 
+                                foreign_keys="[BankAccount.user_id]",  # 👈 Add this
+                                back_populates="user", 
+                                cascade="all, delete-orphan")
+    verified_kyc = relationship("KYC", 
+                          foreign_keys="[KYC.verified_by]",
+                          back_populates="verifier",
+                          viewonly=True)
 
     def set_password(self, password: str):
         """Hash and set password with truncation for bcrypt"""
@@ -49,3 +64,4 @@ class User(Base):
         if len(password.encode('utf-8')) > 72:
             password = password[:72]  # Truncate
         self.password_hash = get_password_hash(password)
+

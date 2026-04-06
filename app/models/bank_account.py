@@ -3,15 +3,17 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import enum
 import uuid
-from datetime import datetime,timezone
 from app.core.timezone import utc_now
 
 from app.core.database import Base
-class AccountType(str, enum.Enum):
+from app.models.base import AuditMixin
+from app.core.enums import CaseInsensitiveEnum
+
+class AccountType(CaseInsensitiveEnum):
     SAVINGS = "SAVINGS"
     CHECKING = "CHECKING"
 
-class BankAccount(Base):
+class BankAccount(Base, AuditMixin):
     __tablename__ = "bank_accounts"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -27,7 +29,7 @@ class BankAccount(Base):
     created_at = Column(DateTime, default=utc_now)
     updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
     # Relationship - connects back to user
-    user = relationship("User", backref="bank_accounts")
+    user = relationship("User",foreign_keys="[BankAccount.user_id]", back_populates="bank_accounts")
 
     
 
