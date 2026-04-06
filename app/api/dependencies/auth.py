@@ -38,6 +38,10 @@ async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ) -> User:
+    
+    if not token:
+        raise HTTPException(401, "Not authenticated")
+   
     """Get current user from access token"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -88,3 +92,4 @@ async def get_current_admin(
             detail="Admin access required"
         )
     return current_user
+
