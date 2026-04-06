@@ -7,10 +7,12 @@ LOCAL_TIMEZONE = timezone.utc  # Default to UTC
 # from zoneinfo import ZoneInfo
 # LOCAL_TIMEZONE = ZoneInfo("Asia/Kolkata")
 
+# ============== CORE TIME FUNCTIONS ==============
+
 def utc_now() -> datetime:
     """
     Get current UTC time (for database storage)
-    Python 3.12+ compliant - no deprecation warning
+
     """
     return datetime.now(timezone.utc)
 

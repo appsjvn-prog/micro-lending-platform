@@ -19,7 +19,7 @@ class OTPService:
         """Generate 6-digit OTP"""
         return ''.join(random.choices(string.digits, k=6))
     
-    def create_otp(self, email: Optional[str], phone: Optional[str], purpose: OTPPurpose, user_id: Optional[str] = None) -> OTPVerification:
+    def create_otp(self, email: Optional[str], phone:str, purpose: OTPPurpose, user_id: Optional[str] = None) -> OTPVerification:
         """Create and store new OTP"""
         # Mark any existing unused OTPs as used
         self.db.query(OTPVerification).filter(
@@ -69,13 +69,8 @@ class OTPService:
         return False
     
     def send_email_otp(self, email: str, otp: str, purpose: OTPPurpose, background_tasks: BackgroundTasks):
-        """Send OTP via email"""
-        # For now, just print to console (we'll implement actual email later)
-        print(f"\n📧 EMAIL OTP for {email}: {otp} (Purpose: {purpose})\n")
-        print(f"⏰ Expires in 5 minutes")
-        
-        # TODO: Implement actual email sending using fastapi-mail
-        background_tasks.add_task(self._send_email_task, email, otp, purpose)
+        """Send OTP via email (Not implemented yet)"""
+        raise NotImplementedError("Email OTP not implemented yet")
     
     def send_sms_otp(self, phone: str, otp: str, purpose: OTPPurpose, background_tasks: BackgroundTasks):
         """Send OTP via SMS"""
