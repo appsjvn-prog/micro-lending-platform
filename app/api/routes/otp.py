@@ -15,10 +15,15 @@ from app.schemas.otp import (
 from app.core.security import create_temp_token
 from app.services.otp_service import OTPService
 from app.models.otp import OTPPurpose, OTPVerification
-from app.models.user import User
+from app.models.user import User, UserStatus
 from app.core.timezone import utc_now
-from app.api.dependencies.auth import get_current_user
-from app.core.exceptions import AppException, NotFoundException, ValidationException
+from app.core.exceptions import (
+    NotFoundException,
+    ValidationException,
+    OTPSendLimitException,
+    OTPExpiredException,
+    OTPInvalidException
+)
 
 router = APIRouter(prefix="/otp", tags=["OTP"])
 
@@ -28,6 +33,8 @@ async def verify_otp(
     db: Session = Depends(get_db)
 ):
     """Verify OTP - User identified by user_id"""
+
+    #1. Find User
     user = db.query(User).filter(User.id == request.user_id).first()
     if not user:
         raise NotFoundException("User")
@@ -35,12 +42,26 @@ async def verify_otp(
     phone_string = f"{user.country_code}{user.national_number}"
     
     
-    # Determine purpose from user state
-    purpose = OTPPurpose.REGISTRATION if user.status == "INACTIVE" else OTPPurpose.PASSWORD_RESET
+    #2. Determine purpose from user state
+    purpose = OTPPurpose.REGISTRATION if user.status == UserStatus.INACTIVE else OTPPurpose.PASSWORD_RESET
+
+    otp_record = db.query(OTPVerification).filter(
+        OTPVerification.phone == phone_string,
+        OTPVerification.purpose == purpose,
+        OTPVerification.is_used == False,
+    ).order_by(OTPVerification.created_at.desc()).first()
     
-    otp_service = OTPService(db)
+    if not otp_record:
+        raise OTPInvalidException()
+    
+    if otp_record.expires_at < utc_now():
+        otp_record.is_used = True
+        db.commit()
+        raise OTPExpiredException()
+    
     
     # Verify OTP
+    otp_service = OTPService(db)
     is_valid = otp_service.verify_otp(
         phone=phone_string,
         otp_code=request.otp_code,
@@ -48,8 +69,21 @@ async def verify_otp(
     )
     
     if not is_valid:
-        raise ValidationException("Invalid or expired OTP")
+        raise OTPInvalidException()
     
+
+        # #check if otp is expired or invalid
+        # otp_record = db.query(OTPVerification).filter(
+        #     OTPVerification.phone == phone_string,
+        #     OTPVerification.purpose == purpose,
+        #     OTPVerification.is_used == False,
+        # ).order_by(OTPVerification.created_at.desc()).first()   
+
+        # if otp_record and otp_record.expires_at < utc_now():
+        #     raise OTPExpiredException()
+        # else:
+        #     raise ValidationException("Invalid OTP")
+        
     # Generate temp token if registration
     temp_token = None
     if purpose == OTPPurpose.REGISTRATION:
@@ -68,18 +102,23 @@ async def verify_otp(
 
 @router.post("/resend", response_model=OTPSendResponse)
 async def resend_otp(
+    request: OTPResendRequest,  
     background_tasks: BackgroundTasks,
-    current_user: User = Depends(get_current_user),  # 👈 Get user from token
     db: Session = Depends(get_db)
 ):
     """Resend OTP - User identified from token"""
+
+    #1. Find User
+    user = db.query(User).filter(User.id == request.user_id).first()
+    if not user:
+        raise NotFoundException("User")
     
-    phone_string = f"{current_user.country_code}{current_user.national_number}"
-    purpose = OTPPurpose.REGISTRATION if current_user.status == "INACTIVE" else OTPPurpose.PASSWORD_RESET
-    
+    phone_string = f"{user.country_code}{user.national_number}"
+    purpose = OTPPurpose.REGISTRATION if user.status == UserStatus.INACTIVE else OTPPurpose.PASSWORD_RESET  
+
+    # 2.Rate limiting
     otp_service = OTPService(db)
-    
-    # Rate limiting
+
     recent_otps = db.query(OTPVerification).filter(
         OTPVerification.phone == phone_string,
         OTPVerification.purpose == purpose,
@@ -87,17 +126,14 @@ async def resend_otp(
     ).count()
     
     if recent_otps >= 5:
-        raise AppException(  # 👈 Use AppException for rate limiting
-            "Too many OTP requests. Please try again later.",
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS
-        )
+        raise OTPSendLimitException(wait_minutes=2)
     
     # Create and send new OTP
     otp = otp_service.create_otp(
-        email=current_user.email,
+        email=user.email,
         phone=phone_string,
         purpose=purpose,
-        user_id=str(current_user.id)
+        user_id=str(user.id)
     )
     
     otp_service.send_sms_otp(phone_string, otp.otp_code, purpose, background_tasks)

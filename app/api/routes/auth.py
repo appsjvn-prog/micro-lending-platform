@@ -1,3 +1,5 @@
+from tkinter import ACTIVE
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -10,7 +12,12 @@ from app.core.security import (
 )
 from app.schemas.auth import TokenResponse
 from app.models.user import User, UserStatus
-from app.core.exceptions import AppException
+from app.core.exceptions import (
+    AuthenticationException,
+    UserNotFoundException,
+    UserInactiveException,
+    AppException
+)
 
 
 router = APIRouter(prefix="/auth")
@@ -20,32 +27,40 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    """Login with email and password"""
-    print(f"\n🔵 LOGIN ATTEMPT: {form_data.username}")
+
+        """Login with email and password"""
+        print(f"\n🔵 LOGIN ATTEMPT: {form_data.username}")
     
-    try:
         # Find user by email
         print("   🔍 Looking up user...")
         user = db.query(User).filter(User.email == form_data.username).first()
         
         if not user:
-            raise AppException("Invalid email or password", status_code=401)
-        
+            print("   ❌ User not found")
+            raise AuthenticationException("Invalid email or password", status_code=401)
+    
         print(f"   ✅ User found: {user.id}")
         print(f"   Role: {user.role}, Status: {user.status}")
         
+        # Check if user has password set
         if not user.password_hash:
-            if not user.password_hash:
-                raise AppException("Please complete OTP verification and set your password first", status_code=400)
+            print("   ❌ No password hash")
+            raise AuthenticationException(
+                "Please complete OTP verification and set your password first",
+                status_code=400
+            )
         
+        # Verify password
         print("   🔐 Verifying password...")
         if not verify_password(form_data.password, user.password_hash):
             print("   ❌ Password incorrect")
-            raise AppException("Invalid email or password", status_code=401)
+            raise AuthenticationException("Invalid email or password", status_code=401)
         
-        if user.status != "ACTIVE":
+        # Check if user is active
+        if user.status != UserStatus.ACTIVE:
             print(f"   ❌ User not active: {user.status}")
-            raise AppException("Your account is not active. Please verify your email/phone first.", status_code=403)
+            raise UserInactiveException()
+        
         print("   ✅ Password correct, generating tokens...")
         access_token = create_access_token(data={"sub": str(user.id)})
         refresh_token = create_refresh_token(data={"sub": str(user.id)})
@@ -59,17 +74,8 @@ def login(
             user_id=user.id,
             role=user.role
         )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"❌ UNEXPECTED ERROR: {type(e).__name__}: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        raise  AppException(  
-            "An unexpected error occurred. Please try again later.",
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+
+
 
 # @router.get("/me", tags=["AUTHENTICATION"])
 # def get_current_user_info(
