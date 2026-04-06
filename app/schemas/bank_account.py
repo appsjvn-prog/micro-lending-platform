@@ -35,6 +35,7 @@ class BankAccountCreateResponse(BaseModel):
     id: UUID
     user_id: UUID
     is_verified: bool
+    is_primary: bool
     created_at: datetime
     updated_at: datetime
 

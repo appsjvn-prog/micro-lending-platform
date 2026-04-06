@@ -4,6 +4,8 @@ from datetime import datetime
 from uuid import UUID
 import re
 import phonenumbers  
+from typing_extensions import Self
+from phonenumbers.phonenumberutil import NumberParseException
 
 from app.models.user import UserRole, UserStatus
 
@@ -38,24 +40,17 @@ class UserBase(BaseModel):
     phone: PhoneNumber
     role: UserRole
 
-    @field_validator('role')
-    def prevent_admin_signup(cls, v):
-        """Prevent users from creating admin accounts"""
-        if v == UserRole.ADMIN:
-            raise ValueError('Cannot create admin account via signup')
-        return v
-    
     @model_validator(mode='after')
-    def validate_full_phone(cls, v):
+    def validate_full_phone(self) -> Self:
         """Validate the complete phone number using phonenumbers"""
-        full = v.phone.full_number()
+        full = self.phone.full_number()
         try:
             parsed = phonenumbers.parse(full)
             if not phonenumbers.is_valid_number(parsed):
                 raise ValueError(f'Invalid phone number: {full}')
         except Exception as e:
             raise ValueError(f'Invalid phone number format: {str(e)}')
-        return v
+        return self
 
 # ---------- Update Schema ----------
 class UserUpdate(BaseModel):
@@ -65,16 +60,16 @@ class UserUpdate(BaseModel):
     status: Optional[UserStatus] = None
     
     @model_validator(mode='after')
-    def validate_full_phone_if_provided(cls, v):
-        if v.phone:
-            full = v.phone.full_number()
+    def validate_full_phone_if_provided(self) -> Self:
+        if self.phone:
+            full = self.phone.full_number()
             try:
                 parsed = phonenumbers.parse(full)
                 if not phonenumbers.is_valid_number(parsed):
                     raise ValueError(f'Invalid phone number: {full}')
             except Exception as e:
                 raise ValueError(f'Invalid phone number format: {str(e)}')
-        return v
+        return self
 
 # ---------- Create Schema ----------
 class UserCreate(UserBase):
@@ -128,33 +123,20 @@ class UserAdminDetailResponse(BaseModel):
 
 # ---------- Register Request Schema ----------
 class UserRegisterRequest(BaseModel):
-    email: Optional[EmailStr] = None
-    phone: Optional[PhoneNumber] = None
+    email: EmailStr
+    phone: PhoneNumber
     role: UserRole
-
-    @field_validator('role')
-    def prevent_admin_signup(cls, v):
-        if v == UserRole.ADMIN:
-            raise ValueError('Cannot create admin account via signup')
-        return v
     
     @model_validator(mode='after')
-    def validate_email_or_phone(self):
-        if not self.email and not self.phone:
-            raise ValueError('Either email or phone must be provided')
-        return self
-    
-    @model_validator(mode='after')
-    def validate_full_phone(cls, v):
-        if v.phone:
-            full = v.phone.full_number()
-            try:
-                parsed = phonenumbers.parse(full)
-                if not phonenumbers.is_valid_number(parsed):
-                    raise ValueError(f'Invalid phone number: {full}')
-            except Exception as e:
+    def validate_full_phone(self) -> Self:
+        full = self.phone.full_number()
+        try:
+            parsed = phonenumbers.parse(full,None)
+            if not phonenumbers.is_valid_number(parsed):
+                raise ValueError(f'Invalid phone number: {full}')
+        except NumberParseException as e:
                 raise ValueError(f'Invalid phone number format: {str(e)}')
-        return v
+        return self
 
 class SetPasswordRequest(BaseModel):
     """Set password after OTP verification"""
@@ -178,7 +160,7 @@ class SetPasswordRequest(BaseModel):
         return v
 
     @model_validator(mode='after')
-    def validate_passwords_match(self):
+    def validate_passwords_match(self) -> Self: 
         if self.password != self.confirm_password:
             raise ValueError('Passwords do not match')
         return self

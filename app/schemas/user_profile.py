@@ -71,6 +71,8 @@ class UserProfileResponse(UserProfileBase):
     profile_completion_pct: int
     created_at: datetime
     updated_at: datetime
+    created_by: Optional[UUID] = None  
+    updated_by: Optional[UUID] = None 
 
     class Config:
         from_attributes = True
@@ -83,6 +85,7 @@ class UserProfileResponse(UserProfileBase):
 class UserProfileMinimalResponse(BaseModel):
     id: UUID
     created_at: datetime
+    updated_at: datetime
     message: str = "User profile created successfully"
 
     class Config:

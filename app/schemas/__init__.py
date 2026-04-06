@@ -13,6 +13,6 @@ from app.schemas.loan_product import (
     LoanProductBase, LoanProductCreate, LoanProductUpdate, LoanProductResponse
 )
 from app.schemas.otp import (
-    OTPSendRequest, OTPVerifyRequest, OTPResendRequest,
+    OTPVerifyRequest, OTPResendRequest,
     OTPSendResponse, OTPVerifyResponse, OTPPurpose
 )

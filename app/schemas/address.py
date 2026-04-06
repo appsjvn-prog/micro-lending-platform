@@ -44,3 +44,14 @@ class AddressResponse(AddressBase):
 
     class Config:
         from_attributes = True
+        
+class AddressCreateResponse(BaseModel):
+    id: UUID
+    address_type: AddressType
+    is_primary: bool
+    city: str
+    state: str
+    message: str = "Address created successfully"
+    
+    class Config:
+        from_attributes = True

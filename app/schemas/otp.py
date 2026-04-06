@@ -6,22 +6,6 @@ from uuid import UUID
 from app.models.otp import OTPPurpose
 from app.schemas.user import PhoneNumber
 
-# ---------- Send OTP Request ----------
-class OTPSendRequest(BaseModel):
-    channel: str = Field(..., pattern="^(email|phone)$", description="Channel to send OTP: email or phone")
-    email: Optional[EmailStr] = None
-    phone: Optional[PhoneNumber] = None
-    purpose: OTPPurpose
-
-    @field_validator('channel')
-    def validate_channel_data(cls, v, info):
-        """Validate that email/phone is provided based on channel"""
-        if v == "email" and not info.data.get('email'):
-            raise ValueError("Email is required when channel is email")
-        if v == "phone" and not info.data.get('phone'):
-            raise ValueError("Phone is required when channel is phone")
-        return v
-
 # ---------- Verify OTP Request ----------
 class OTPVerifyRequest(BaseModel):
     user_id: UUID
@@ -30,7 +14,7 @@ class OTPVerifyRequest(BaseModel):
 # ---------- Resend OTP Request ----------
 class OTPResendRequest(BaseModel):
    
-    phone: PhoneNumber  # Make required, not optional
+    user_id: UUID
 
 # ---------- OTP Response ----------
 class OTPSendResponse(BaseModel):

@@ -1,6 +1,7 @@
 
 from pydantic import BaseModel, Field, field_validator
 from uuid import UUID
+from decimal import Decimal
 from datetime import datetime
 from typing import Optional
 from app.models.loan_offer import LoanOfferStatus
@@ -9,14 +10,13 @@ from app.models.loan_offer import LoanOfferStatus
 class LoanOfferBase(BaseModel):
     offer_name: str = Field(..., min_length=3, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
-    min_amount: float = Field(..., gt=0)
-    max_amount: float = Field(..., gt=0)
+    min_amount: Decimal = Field(..., gt=0)
+    max_amount: Decimal = Field(..., gt=0)
     min_tenure_months: int = Field(..., gt=0)
     max_tenure_months: int = Field(..., gt=0)
-    interest_rate: float = Field(..., gt=0, le=100)
+    interest_rate: Decimal = Field(..., gt=0, le=100)
     preferred_credit_score: Optional[int] = Field(None, ge=300, le=900)
     preferred_employment_types: Optional[str] = None
-    expires_at: Optional[datetime] = None
 
     @field_validator('max_amount')
     def validate_amount_range(cls, v, info):
@@ -32,17 +32,17 @@ class LoanOfferBase(BaseModel):
 
 # Create Schema
 class LoanOfferCreate(LoanOfferBase):
-    loan_product_id: Optional[UUID] = None
+    loan_product_id: UUID
 
 # Update Schema
 class LoanOfferUpdate(BaseModel):
     offer_name: Optional[str] = Field(None, min_length=3, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
-    min_amount: Optional[float] = Field(None, gt=0)
-    max_amount: Optional[float] = Field(None, gt=0)
+    min_amount: Optional[Decimal] = Field(None, gt=0)
+    max_amount: Optional[Decimal] = Field(None, gt=0)
     min_tenure_months: Optional[int] = Field(None, gt=0)
     max_tenure_months: Optional[int] = Field(None, gt=0)
-    interest_rate: Optional[float] = Field(None, gt=0, le=100)
+    interest_rate: Optional[Decimal] = Field(None, gt=0, le=100)
     preferred_credit_score: Optional[int] = Field(None, ge=300, le=900)
     preferred_employment_types: Optional[str] = None
     status: Optional[LoanOfferStatus] = None
@@ -74,11 +74,11 @@ class LoanOfferListResponse(BaseModel):
     id: UUID
     offer_name: str
     lender_id: UUID
-    min_amount: float
-    max_amount: float
+    min_amount: Decimal
+    max_amount: Decimal
     min_tenure_months: int
     max_tenure_months: int
-    interest_rate: float
+    interest_rate: Decimal
     status: LoanOfferStatus
     expires_at: datetime
 
