@@ -119,7 +119,7 @@ def get_borrower_profiles(
         if not profile:
             return []
         risk_result = risk_calc.calculate_risk_score(str(current_user.id))
-        # ✅ FIXED: Use risk_result, not empty dict
+        #  FIXED: Use risk_result, not empty dict
         return [_build_profile_response(profile, risk_result, include_sensitive=True)]
   
     elif current_user.role == UserRole.LENDER:
@@ -135,7 +135,7 @@ def get_borrower_profiles(
     else:
         return []
     
-@router.get("/profile/me/risk-score")
+@router.get("/risk-score")
 def get_my_risk_score(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -242,14 +242,14 @@ def _build_profile_response(profile: BorrowerProfile, risk_result: dict, include
         "updated_at": profile.updated_at,
     }
     
-    # ✅ Always add risk score if available (even for non-sensitive view)
+    #  Always add risk score if available (even for non-sensitive view)
     if risk_result and "error" not in risk_result:
         response["risk_score"] = risk_result.get("score")
         response["risk_level"] = risk_result.get("risk_level")
         if include_sensitive:
             response["risk_breakdown"] = risk_result.get("breakdown")
     else:
-        # ✅ Add default None values so the field exists in response
+        # Add default None values so the field exists in response
         response["risk_score"] = None
         response["risk_level"] = None
     
@@ -294,87 +294,3 @@ def _build_lender_view_response(profile: BorrowerProfile, risk_result: dict) -> 
         "risk_level": risk_result.get("risk_level") if "error" not in risk_result else None,
         "is_profile_complete": profile.is_profile_complete,
     }
-# ---------- Admin Endpoints ----------
-# @router.get("/profiles/user/{user_id}", response_model=BorrowerProfileResponse)
-# def get_borrower_profile_by_user_id(
-#     user_id: UUID,
-#     admin: User = Depends(get_current_admin),
-#     db: Session = Depends(get_db)
-# ):
-#     """
-#     Get borrower profile by user ID (admin only).
-    
-#     Returns profile for a specific borrower.
-#     """
-#     profile = db.query(BorrowerProfile).filter(
-#         BorrowerProfile.user_id == user_id
-#     ).first()
-    
-#     if not profile:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Borrower profile not found for this user"
-#         )
-    
-#     return profile
-
-# @router.get("/stats/simple", response_model=dict)
-# def get_simple_borrower_stats(
-#     admin: User = Depends(get_current_admin),
-#     db: Session = Depends(get_db)
-# ):
-#     """
-#     Get basic borrower statistics (admin only).
-    
-#     Returns count of borrowers by employment type.
-#     """
-#     total = db.query(BorrowerProfile).count()
-    
-#     # Count by employment type
-#     salaried = db.query(BorrowerProfile).filter(
-#         BorrowerProfile.employment_type == "SALARIED"
-#     ).count()
-    
-#     self_employed = db.query(BorrowerProfile).filter(
-#         BorrowerProfile.employment_type == "SELF_EMPLOYED"
-#     ).count()
-    
-#     business = db.query(BorrowerProfile).filter(
-#         BorrowerProfile.employment_type == "BUSINESS"
-#     ).count()
-    
-#     return {
-#         "total_borrowers": total,
-#         "by_employment_type": {
-#             "SALARIED": salaried,
-#             "SELF_EMPLOYED": self_employed,
-#             "BUSINESS": business
-#         }
-#     }
-
-# # Optional: Filter borrowers by income range (admin only)
-# @router.get("/profiles/filter/income", response_model=List[BorrowerProfileResponse])
-# def filter_borrowers_by_income(
-#     min_income: float,
-#     max_income: float,
-#     admin: User = Depends(get_current_admin),
-#     db: Session = Depends(get_db)
-# ):
-#     """
-#     Filter borrowers by monthly income range (admin only).
-    
-#     - min_income: Minimum monthly income
-#     - max_income: Maximum monthly income
-#     """
-#     if min_income > max_income:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="Min income cannot be greater than max income"
-#         )
-    
-#     profiles = db.query(BorrowerProfile).filter(
-#         BorrowerProfile.monthly_income >= min_income,
-#         BorrowerProfile.monthly_income <= max_income
-#     ).all()
-    
-#     return profiles

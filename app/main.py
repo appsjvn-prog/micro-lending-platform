@@ -227,7 +227,7 @@ def register(
 app.include_router(otp.router)
 
 # ---------- Set Password (After OTP Verification) ----------
-@app.post("/auth/set-password", response_model=TokenResponse, tags=["PASSWORD SETUP"])
+@app.post("/auth/set-password", response_model=TokenResponse, tags=["Password Setup"])
 def set_password(
     request: SetPasswordRequest,
     db: Session = Depends(get_db)
@@ -282,7 +282,7 @@ def set_password(
         user.set_password(request.password)
         user.status = UserStatus.ACTIVE
         db.commit()
-        print(f"   ✅ Password set and user activated for {user.email}")
+        print(f"    Password set and user activated for {user.email}")
     except Exception as e:
         db.rollback()
         print(f"❌ Database error: {str(e)}")
@@ -438,7 +438,7 @@ def update_bank_account(
     
     return db_account
 
-@app.post("/bank-accounts/{account_id}/verify", status_code=status.HTTP_200_OK, tags=["Bank Accounts"])
+@app.post("/bank-accounts/{account_id}/verify", status_code=status.HTTP_200_OK,summary="Verify Bank Account (admin)", tags=["Bank Accounts"])
 def verify_bank_account(
     account_id: str,
     verify_data: BankAccountVerify,

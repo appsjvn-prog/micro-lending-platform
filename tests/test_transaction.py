@@ -228,10 +228,9 @@ def test_flexible_repayment_success(client, test_loan, test_repayment_schedules,
                                      borrower_auth_headers):
     """Test successful flexible repayment"""
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
-            "loan_id": str(test_loan.id),
             "amount": 5000.00
         }
     )
@@ -251,7 +250,7 @@ def test_flexible_repayment_full_payment(client, test_loan, test_repayment_sched
     total = sum(s.amount_due for s in test_repayment_schedules)
     
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -268,8 +267,9 @@ def test_flexible_repayment_full_payment(client, test_loan, test_repayment_sched
 
 def test_flexible_repayment_loan_not_found(client, borrower_auth_headers):
     """Test repayment for non-existent loan"""
+    fake_id = uuid.uuid4()
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{fake_id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(uuid.uuid4()),
@@ -285,7 +285,7 @@ def test_flexible_repayment_loan_not_found(client, borrower_auth_headers):
 def test_flexible_repayment_unauthorized(client, test_loan, lender_auth_headers):
     """Test lender cannot make repayment (only borrower)"""
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=lender_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -305,7 +305,7 @@ def test_flexible_repayment_overpayment(client, test_loan, test_repayment_schedu
     total = sum(s.amount_due for s in test_repayment_schedules)
     
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -321,7 +321,7 @@ def test_flexible_repayment_overpayment(client, test_loan, test_repayment_schedu
 def test_flexible_repayment_zero_amount(client, test_loan, borrower_auth_headers):
     """Test repayment with zero amount should fail"""
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -337,7 +337,7 @@ def test_flexible_repayment_zero_amount(client, test_loan, borrower_auth_headers
 def test_flexible_repayment_negative_amount(client, test_loan, borrower_auth_headers):
     """Test repayment with negative amount should fail"""
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -359,7 +359,7 @@ def test_get_loan_transactions(client, test_loan, test_repayment_schedules,
     
     # Make a payment first (this creates a transaction)
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -399,7 +399,7 @@ def test_get_my_transactions(client, test_loan, test_repayment_schedules,
     """Test getting user's own transactions"""
     # Make a payment first
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -443,8 +443,9 @@ def test_get_my_transactions_no_account(client, test_borrower, db):
 # ============== TEST UNAUTHORIZED ACCESS ==============
 
 def test_unauthorized_access_no_token(client):
+    fake_id = uuid.uuid4()
     """Test accessing transactions without authentication"""
-    response = client.post("/transactions/repayments", json={})
+    response = client.post(f"/transactions/loans/{fake_id}", json={})
     assert response.status_code == 401
     
     response = client.get("/transactions/user")
@@ -459,7 +460,7 @@ def test_partial_payment_multiple_installments(client, test_loan, test_repayment
     """Test partial payment that covers part of first and second installment"""
     # First installment amount is 8884.91
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),
@@ -480,7 +481,7 @@ def test_exact_emi_payment(client, test_loan, test_repayment_schedules,
                            borrower_auth_headers):
     """Test exact EMI payment"""
     response = client.post(
-        "/transactions/repayments",
+        f"/transactions/loans/{test_loan.id}",
         headers=borrower_auth_headers,
         json={
             "loan_id": str(test_loan.id),

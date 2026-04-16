@@ -123,11 +123,11 @@ def test_create_multiple_addresses(client, test_user_profile, auth_headers, samp
 def test_create_address_limit_exceeded(client, test_user_profile, auth_headers, sample_address_data):
     """Test creating more than maximum allowed addresses"""
     # Create MAX_ADDRESSES_PER_USER addresses
-    for i in range(5):
+    for i in range(3):
         address_data = sample_address_data.copy()
         address_data["address_line1"] = f"Address {i+1}"
         address_data["city"] = f"City {i+1}"
-        address_data["pincode"] = f"40000{i+1}"
+        address_data["pincode"] = f"40000{i+1:02d}"
         
         response = client.post("/addresses", headers=auth_headers, json=address_data)
         assert response.status_code == 201

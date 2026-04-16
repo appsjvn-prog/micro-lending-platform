@@ -1,4 +1,3 @@
-from tkinter import ACTIVE
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -22,7 +21,7 @@ from app.core.exceptions import (
 
 router = APIRouter(prefix="/auth")
 
-@router.post("/login", response_model=TokenResponse, tags=["AUTHENTICATION"])
+@router.post("/login", response_model=TokenResponse, tags=["Authentication"])
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
@@ -39,7 +38,7 @@ def login(
             print("   ❌ User not found")
             raise AuthenticationException("Invalid email or password", status_code=401)
     
-        print(f"   ✅ User found: {user.id}")
+        print(f"    User found: {user.id}")
         print(f"   Role: {user.role}, Status: {user.status}")
         
         # Check if user has password set
@@ -61,11 +60,11 @@ def login(
             print(f"   ❌ User not active: {user.status}")
             raise UserInactiveException()
         
-        print("   ✅ Password correct, generating tokens...")
+        print("    Password correct, generating tokens...")
         access_token = create_access_token(data={"sub": str(user.id)})
         refresh_token = create_refresh_token(data={"sub": str(user.id)})
         
-        print(f"   ✅ Login successful for {user.email}")
+        print(f"    Login successful for {user.email}")
         
         return TokenResponse(
             access_token=access_token,
@@ -74,24 +73,3 @@ def login(
             user_id=user.id,
             role=user.role
         )
-
-
-
-# @router.get("/me", tags=["AUTHENTICATION"])
-# def get_current_user_info(
-#     current_user: User = Depends(get_current_user)  # ✅ Uses the imported dependency
-# ):
-#     """Get current authenticated user info"""
-#     return {
-#         "id": str(current_user.id),
-#         "email": current_user.email,
-#         "country_code": current_user.country_code,
-#         "national_number": current_user.national_number,
-#         "role": current_user.role,
-#         "status": current_user.status
-#     }
-
-# @router.post("/logout", tags=["AUTHENTICATION"])
-# def logout():
-#     """Logout user - Client should discard the tokens"""
-#     return {"message": "Successfully logged out"}

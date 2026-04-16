@@ -65,7 +65,7 @@ def create_admin():
         
         db.add(admin)
         db.commit()
-        print(f"\n✅ Admin created successfully!")
+        print(f"\n Admin created successfully!")
         print(f"Email: {email}")
         print(f"Phone: {country_code} {national_number}")
         print("You can now log in with this account.")

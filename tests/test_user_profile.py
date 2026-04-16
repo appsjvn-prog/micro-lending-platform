@@ -408,12 +408,12 @@ def test_get_own_profile_through_profiles_endpoint(client, db, test_user, auth_h
     db.add(profile)
     db.commit()
     
-    # ✅ FIXED: Use the correct endpoint
+    #  FIXED: Use the correct endpoint
     response = client.get("/user/profile", headers=auth_headers)
     
     assert response.status_code == 200
     data = response.json()
-    # ✅ FIXED: For regular user, it returns a single object, not a list
+    #  FIXED: For regular user, it returns a single object, not a list
     assert isinstance(data, dict)
     assert data["first_name"] == "John"
     assert data["last_name"] == "Doe"

@@ -19,13 +19,13 @@ class RepaymentScheduleResponse(BaseModel):
     loan_id: UUID
     installment_number: int
     due_date: date
-    amount_due: Decimal
+    amount_due: Decimal = Field(example = 15000)
     principal_amount: Decimal
     interest_amount: Decimal
     amount_paid: Decimal = Decimal('0')
     principal_paid: Decimal = Decimal('0')
     interest_paid: Decimal = Decimal('0')
-    remaining_amount: Decimal
+    remaining_amount: Decimal = Field(example = 1500)
     status: RepaymentStatus
     paid_at: Optional[datetime] = None
     grace_period_days: int = 3

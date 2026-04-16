@@ -28,17 +28,6 @@ class LenderProfile(Base, AuditMixin):
     profile_name = Column(String(100), nullable=False)
     business_type = Column(String(50), nullable=False)  # INDIVIDUAL, COMPANY, TRUST
     
-    # Financial Info
-    # available_balance = Column(Numeric(10, 2), default=0.0, nullable=False)
-    # total_lent = Column(Numeric(10, 2), default=0.0, nullable=False)
-    
-    # Preferences (Loan Offer Defaults)
-    # default_min_amount = Column(Float, nullable=True)
-    # default_max_amount = Column(Float, nullable=True)
-    # default_min_tenure = Column(Integer, nullable=True)
-    # default_max_tenure = Column(Integer, nullable=True)
-    # default_interest_rate = Column(Float, nullable=True)
-    
     # Risk Profile
     risk_appetite = Column(Enum(RiskAppetite), default=RiskAppetite.MEDIUM)
     

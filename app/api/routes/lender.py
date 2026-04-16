@@ -200,7 +200,7 @@ def update_lender_profile(
     
     return profile
 
-@router.patch("/profiles/{profile_id}/verify", response_model=LenderProfileResponse)
+@router.patch("/profiles/{profile_id}/verify", response_model=LenderProfileResponse,summary="(admin)")
 def verify_lender_profile(
     profile_id: UUID,
     admin: User = Depends(get_current_admin),

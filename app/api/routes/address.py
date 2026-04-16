@@ -30,6 +30,7 @@ def get_user_profile(current_user: User, db: Session):
     if not profile:
         raise AppException("Please create your user profile before adding addresses", status_code=400)
     return profile
+
 def is_duplicate_address(profile_id: UUID, address_data: dict, db: Session, exclude_id: UUID = None) -> bool:
     """
     Check if address already exists for the user profile.

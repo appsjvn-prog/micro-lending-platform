@@ -59,9 +59,9 @@ def calculate_total_remaining(schedules: list) -> Decimal:
         total += remaining + penalty
     return total
 
-@router.post("/repayments/{loan_id}", response_model=FlexibleRepaymentResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/loans/{loan_id}", response_model=FlexibleRepaymentResponse, status_code=status.HTTP_201_CREATED)
 def make_flexible_repayment(
-    loan_id: UUID,  # ← Path parameter
+    loan_id: UUID,
     request: FlexibleRepaymentRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)

@@ -71,20 +71,6 @@ async def verify_otp(
     if not is_valid:
         raise OTPInvalidException()
     
-
-        # #check if otp is expired or invalid
-        # otp_record = db.query(OTPVerification).filter(
-        #     OTPVerification.phone == phone_string,
-        #     OTPVerification.purpose == purpose,
-        #     OTPVerification.is_used == False,
-        # ).order_by(OTPVerification.created_at.desc()).first()   
-
-        # if otp_record and otp_record.expires_at < utc_now():
-        #     raise OTPExpiredException()
-        # else:
-        #     raise ValidationException("Invalid OTP")
-        
-    # Generate temp token if registration
     temp_token = None
     if purpose == OTPPurpose.REGISTRATION:
         temp_token = create_temp_token(

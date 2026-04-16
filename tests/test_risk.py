@@ -21,7 +21,7 @@ class TestRiskScoreLogic:
         assert self._get_risk_level(20) == "HIGH"
         assert self._get_risk_level(0) == "HIGH"
         
-        print("✅ Risk level thresholds test passed")
+        print(" Risk level thresholds test passed")
     
     def test_income_scoring(self):
         """Test income contribution to score"""
@@ -50,7 +50,7 @@ class TestRiskScoreLogic:
             
             assert bonus == expected_bonus, f"Income {income}: expected {expected_bonus}, got {bonus}"
         
-        print("✅ Income scoring test passed")
+        print(" Income scoring test passed")
     
     def test_tenure_scoring(self):
         """Test job tenure contribution to score"""
@@ -82,7 +82,7 @@ class TestRiskScoreLogic:
             
             assert bonus == expected_bonus, f"Tenure {tenure} months: expected {expected_bonus}, got {bonus}"
         
-        print("✅ Tenure scoring test passed")
+        print(" Tenure scoring test passed")
     
     def test_active_loan_penalty(self):
         """Test active loan penalties"""
@@ -107,7 +107,7 @@ class TestRiskScoreLogic:
             
             assert penalty == expected_penalty, f"{loan_count} loans: expected penalty {expected_penalty}, got {penalty}"
         
-        print("✅ Active loan penalty test passed")
+        print(" Active loan penalty test passed")
     
     def _get_risk_level(self, score):
         """Helper to get risk level from score"""

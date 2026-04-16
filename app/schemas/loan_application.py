@@ -52,7 +52,7 @@ class LoanApplicationListResponse(BaseModel):
     id: UUID
     loan_offer_id: UUID
     borrower_id: UUID
-    requested_amount: Decimal
+    requested_amount: Decimal = Field(example = 1500)
     requested_tenure: int
     status: LoanApplicationStatus
     applied_at: datetime
@@ -77,7 +77,7 @@ class LenderApplicationResponse(LoanApplicationListResponse):
 class LoanApplicationBaseResponse(BaseModel):
     id: UUID
     loan_offer_id: UUID
-    requested_amount: Decimal   
+    requested_amount: Decimal  = Field(example = 1500)  
     requested_tenure: int
     status: LoanApplicationStatus
     applied_at: datetime
@@ -101,7 +101,7 @@ class LenderLoanApplicationResponse(LoanApplicationBaseResponse):
 
 class LoanApplicationUpdate(BaseModel):
     """Schema for updating loan application"""
-    requested_amount: Optional[Decimal] = Field(None, gt=0)
+    requested_amount: Optional[Decimal] = Field(None, gt=0,example = 1500)
     requested_tenure: Optional[int] = Field(None, gt=0)
     interest_rate: Optional[Decimal] = Field(None, gt=0, le=100)  # For admin only
     
@@ -125,7 +125,7 @@ class AdminApplicationDetail(BaseModel):
     """Detailed application info for admin"""
     id: UUID
     loan_offer_id: UUID
-    requested_amount: Decimal
+    requested_amount: Decimal = Field(example = 1500)
     requested_tenure: int
     status: LoanApplicationStatus
     applied_at: datetime

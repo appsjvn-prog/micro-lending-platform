@@ -32,11 +32,6 @@ class BorrowerProfile(Base, AuditMixin):
     current_job_tenure_months = Column(Integer, nullable=True)  # Months in current job
     total_work_experience_years = Column(Integer, nullable=True)
     
-    # Financial Health (will be updated by system)
-    # credit_score = Column(Integer, nullable=True)  # 300-900
-    # existing_loan_count = Column(Integer, default=0)
-    # total_existing_liabilities = Column(Float, default=0)
-    
     risk_score = Column(Integer, nullable=True)  # Store latest risk score
     risk_level = Column(String(20), nullable=True)  # LOW, MEDIUM, HIGH
     last_risk_calculation = Column(DateTime, nullable=True) # When last calculated

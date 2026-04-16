@@ -101,7 +101,7 @@ def upload_kyc_document(
         ).first()
         
         if existing:
-            # ✅ Allow re-upload if document was rejected
+            #  Allow re-upload if document was rejected
             if existing.rejection_reason:
                 # Update existing document with new file
                 existing.file_url = doc.file_url

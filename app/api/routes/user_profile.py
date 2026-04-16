@@ -56,7 +56,7 @@ def create_user_profile(
          raise ProfileAlreadyExistsException()
     
     try:
-    # ✅ FIX - Add alternate mobile fields
+    #  FIX - Add alternate mobile fields
         alternate_country_code = None
         alternate_national_number = None
         if profile.alternate_mobile:

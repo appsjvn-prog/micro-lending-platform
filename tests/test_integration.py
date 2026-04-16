@@ -316,7 +316,7 @@ class TestLoanProduct:
         
         assert response.status_code == 201
         assert "id" in response.json()
-        print(f"\n✅ Loan product created with ID: {response.json()['id']}")
+        print(f"\n Loan product created with ID: {response.json()['id']}")
 
 
 class TestLoanOffer:
@@ -344,7 +344,7 @@ class TestLoanOffer:
         
         assert product_response.status_code == 201
         product_id = product_response.json()["id"]
-        print(f"✅ Loan product created: {product_id}")
+        print(f" Loan product created: {product_id}")
         
         # Create a lender user
         lender_email = f"lender_{uuid.uuid4().hex[:8]}@example.com"
@@ -358,7 +358,7 @@ class TestLoanOffer:
         })
         assert reg_response.status_code == 201
         lender_id = reg_response.json()["id"]
-        print(f"✅ Lender registered: {lender_id}")
+        print(f" Lender registered: {lender_id}")
         
         # Setup OTP and password for lender
         from app.models.otp import OTPVerification
@@ -387,7 +387,7 @@ class TestLoanOffer:
         assert pwd_response.status_code == 200
         access_token = pwd_response.json()["access_token"]
         lender_headers = {"Authorization": f"Bearer {access_token}"}
-        print(f"✅ Lender authenticated")
+        print(f" Lender authenticated")
         
         # Create user profile for lender
         profile_response = client.post("/user/profile", json={
@@ -403,7 +403,7 @@ class TestLoanOffer:
             print("User profile already exists")
         else:
             assert profile_response.status_code == 201
-        print(f"✅ User profile created")
+        print(f" User profile created")
         
         # Create lender profile
         lender_profile_response = client.post("/lender/profile", json={
@@ -427,7 +427,7 @@ class TestLoanOffer:
             lender_profile.is_verified = True
             lender_profile.status = LenderStatus.ACTIVE
             db.commit()
-            print(f"✅ Lender profile verified")
+            print(f" Lender profile verified")
         
         # Create loan offer
         offer_data = {
@@ -463,7 +463,7 @@ class TestLoanOffer:
         
         assert response.status_code == 201
         assert "id" in response.json()
-        print(f"\n✅ Loan offer created with ID: {response.json()['id']}")
+        print(f"\n Loan offer created with ID: {response.json()['id']}")
 
 class TestLoanApplication:
     """Test loan application creation"""
@@ -527,7 +527,7 @@ class TestLoanApplication:
             print(f"Error: {response.text}")
         
         assert response.status_code == 201
-        print(f"✅ Loan application created")
+        print(f" Loan application created")
 
 
 def create_verified_lender(client, db):
@@ -706,7 +706,7 @@ class TestLoanAcceptance:
         }, headers=admin_headers)
         assert product_response.status_code == 201
         product_id = product_response.json()["id"]
-        print(f"✅ Loan product created: {product_id}")
+        print(f" Loan product created: {product_id}")
         
         # Create verified lender
         lender = create_verified_lender(client, db)
@@ -727,7 +727,7 @@ class TestLoanAcceptance:
         }, headers=lender_headers)
         assert offer_response.status_code == 201
         offer_id = offer_response.json()["id"]
-        print(f"✅ Loan offer created: {offer_id}")
+        print(f" Loan offer created: {offer_id}")
         
         # Create borrower with bank account
         borrower = create_borrower_with_bank_account(client, db)
@@ -743,7 +743,7 @@ class TestLoanAcceptance:
         }, headers=borrower_headers)
         assert app_response.status_code == 201
         application_id = app_response.json()["id"]
-        print(f"✅ Loan application created: {application_id}")
+        print(f" Loan application created: {application_id}")
         
         # Accept the application
         accept_response = client.post(f"/loan-applications/{application_id}/review", json={
@@ -756,7 +756,7 @@ class TestLoanAcceptance:
             print(f"Error: {accept_response.text}")
         
         assert accept_response.status_code == 200
-        print(f"✅ Loan application accepted")
+        print(f" Loan application accepted")
         
         # Verify loan was created
         loans_response = client.get("/loans", headers=borrower_headers)
@@ -765,14 +765,14 @@ class TestLoanAcceptance:
         assert len(loans) >= 1
         
         loan_id = loans[0]["id"]
-        print(f"✅ Loan created: {loan_id}")
+        print(f" Loan created: {loan_id}")
         
         # Verify repayment schedule was generated
         schedule_response = client.get(f"/loans/{loan_id}/schedule", headers=borrower_headers)
         assert schedule_response.status_code == 200
         schedule_data = schedule_response.json()
         assert len(schedule_data["schedules"]) == 12
-        print(f"✅ Repayment schedule generated with 12 installments")
+        print(f" Repayment schedule generated with 12 installments")
         
         return loan_id
     
@@ -863,7 +863,7 @@ class TestRepayment:
         }, headers=borrower_headers)
         
         assert repayment_response.status_code == 201
-        print(f"\n✅ Repayment successful")
+        print(f"\n Repayment successful")
 
 # tests/test_integration.py - Add this complete integration test
 
@@ -898,12 +898,12 @@ class TestCompleteLoanLifecycle:
         }, headers=admin_headers)
         assert product_response.status_code == 201
         product_id = product_response.json()["id"]
-        print(f"   ✅ Loan product created: {product_id}")
+        print(f"    Loan product created: {product_id}")
         
         print("\n📌 PHASE 2: Creating lender")
         lender = create_verified_lender(client, db)
         lender_headers = lender["headers"]
-        print(f"   ✅ Lender created: {lender['id']}")
+        print(f"    Lender created: {lender['id']}")
         
         print("\n📌 PHASE 3: Creating loan offer")
         offer_response = client.post("/loan-offers", json={
@@ -920,12 +920,12 @@ class TestCompleteLoanLifecycle:
         }, headers=lender_headers)
         assert offer_response.status_code == 201
         offer_id = offer_response.json()["id"]
-        print(f"   ✅ Loan offer created: {offer_id}")
+        print(f"    Loan offer created: {offer_id}")
         
         print("\n📌 PHASE 4: Creating borrower")
         borrower = create_borrower_with_bank_account(client, db)
         borrower_headers = borrower["headers"]
-        print(f"   ✅ Borrower created: {borrower['id']}")
+        print(f"    Borrower created: {borrower['id']}")
         
         print("\n📌 PHASE 5: Creating loan application")
         app_response = client.post("/loan-applications", json={
@@ -937,7 +937,7 @@ class TestCompleteLoanLifecycle:
         }, headers=borrower_headers)
         assert app_response.status_code == 201
         application_id = app_response.json()["id"]
-        print(f"   ✅ Loan application created: {application_id}")
+        print(f"    Loan application created: {application_id}")
         
         print("\n📌 PHASE 6: Accepting application")
         accept_response = client.post(f"/loan-applications/{application_id}/review", json={
@@ -945,7 +945,7 @@ class TestCompleteLoanLifecycle:
             "lender_notes": "Approved"
         }, headers=lender_headers)
         assert accept_response.status_code == 200
-        print(f"   ✅ Application accepted")
+        print(f"    Application accepted")
         
         print("\n📌 PHASE 7: Getting loan")
         loans_response = client.get("/loans", headers=borrower_headers)
@@ -953,14 +953,14 @@ class TestCompleteLoanLifecycle:
         loans = loans_response.json()
         assert len(loans) >= 1
         loan_id = loans[0]["id"]
-        print(f"   ✅ Loan created: {loan_id}")
+        print(f"    Loan created: {loan_id}")
         
         print("\n📌 PHASE 8: Getting repayment schedule")
         schedule_response = client.get(f"/loans/{loan_id}/schedule", headers=borrower_headers)
         assert schedule_response.status_code == 200
         schedule_data = schedule_response.json()
         assert len(schedule_data["schedules"]) == 12
-        print(f"   ✅ Repayment schedule generated")
+        print(f"    Repayment schedule generated")
         
         # ========== PHASE 9: Make all repayments ==========
         print("\n📌 PHASE 9: Making repayments")
@@ -1013,9 +1013,9 @@ class TestCompleteLoanLifecycle:
         print("\n" + "="*70)
         print("🎉 INTEGRATION TEST PASSED!")
         print("="*70)
-        print("✅ Complete loan lifecycle tested successfully")
-        print(f"✅ Total paid: ₹{total_paid}")
-        print(f"✅ Final status: {final_loan_data['status']}")
+        print(" Complete loan lifecycle tested successfully")
+        print(f" Total paid: ₹{total_paid}")
+        print(f" Final status: {final_loan_data['status']}")
         print("="*70)
 # Run tests
 if __name__ == "__main__":

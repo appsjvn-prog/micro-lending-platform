@@ -62,8 +62,8 @@ class LoanProductUpdate(BaseModel):
     min_tenure_months: Optional[int] = Field(None, gt=0, ge=MIN_TENURE_MONTHS, le=MAX_TENURE_MONTHS, example=6)
     max_tenure_months: Optional[int] = Field(None, gt=0, ge=MIN_TENURE_MONTHS, le=MAX_TENURE_MONTHS, example=24)
     interest_type: Optional[InterestType] = None
-    min_interest_rate: Optional[Decimal] = Field(None, gt=0, example=5.0)  # ✅ No hardcoded limits
-    max_interest_rate: Optional[Decimal] = Field(None, gt=0, example=20.0)  # ✅ No hardcoded limits
+    min_interest_rate: Optional[Decimal] = Field(None, gt=0, example=5.0)  
+    max_interest_rate: Optional[Decimal] = Field(None, gt=0, example=20.0)  
     status: Optional[LoanProductStatus] = None
 
     @field_validator('max_amount')

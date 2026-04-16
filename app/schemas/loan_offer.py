@@ -10,11 +10,11 @@ from app.models.loan_offer import LoanOfferStatus
 class LoanOfferBase(BaseModel):
     offer_name: str = Field(..., min_length=3, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
-    min_amount: Decimal = Field(..., gt=0)
-    max_amount: Decimal = Field(..., gt=0)
+    min_amount: Decimal = Field(..., gt=0,example=1000)
+    max_amount: Decimal = Field(..., gt=0, example= 10000)
     min_tenure_months: int = Field(..., gt=0)
     max_tenure_months: int = Field(..., gt=0)
-    interest_rate: Decimal = Field(..., gt=0, le=100)
+    interest_rate: Decimal = Field(..., gt=0, le=100, example = 12.5)
     preferred_credit_score: Optional[int] = Field(None, ge=300, le=900)
     preferred_employment_types: Optional[str] = None
 
@@ -74,8 +74,8 @@ class LoanOfferListResponse(BaseModel):
     id: UUID
     offer_name: str
     lender_id: UUID
-    min_amount: Decimal
-    max_amount: Decimal
+    min_amount: Decimal = Field (..., example=10000)
+    max_amount: Decimal  = Field (..., example=100000)
     min_tenure_months: int
     max_tenure_months: int
     interest_rate: Decimal

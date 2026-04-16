@@ -107,6 +107,20 @@ def lender_auth_headers(test_lender):
     access_token = create_access_token(data={"sub": str(test_lender.id)})
     return {"Authorization": f"Bearer {access_token}"}
 
+@pytest.fixture
+def test_borrower_profile(db: Session, test_user):
+    """Create borrower profile for risk score"""
+    profile = BorrowerProfile(
+        user_id=test_user.id,
+        employment_type=EmploymentType.SALARIED,
+        monthly_income=50000,
+        current_job_tenure_months=12
+    )
+    db.add(profile)
+    db.commit()
+    db.refresh(profile)
+    return profile
+
 
 # ============== TEST CREATE BORROWER PROFILE ==============
 
@@ -272,7 +286,7 @@ def test_get_my_borrower_profile(client, test_user_profile, auth_headers):
     assert len(data) == 1
     assert data[0]["employment_type"] == "SALARIED"
     assert data[0]["monthly_income"] == 50000.0
-    # ✅ Check that risk_score exists (can be None or a number)
+    #  Check that risk_score exists (can be None or a number)
     assert "risk_score" in data[0]
     # risk_score may be None initially, that's fine
 
@@ -335,20 +349,11 @@ def test_get_borrower_profiles_no_profile(client, auth_headers):
 
 # ============== TEST GET RISK SCORE ==============
 
-def test_get_my_risk_score(client, test_user_profile, auth_headers):
+def test_get_my_risk_score(client,test_user_profile, test_borrower_profile, auth_headers):
     """Test getting risk score endpoint"""
     # Create profile first
-    client.post(
-        "/borrower/profile",
-        headers=auth_headers,
-        json={
-            "employment_type": "SALARIED",
-            "monthly_income": 50000
-        }
-    )
-    
-    response = client.get("/borrower/profile/me/risk-score", headers=auth_headers)
-    
+    response = client.get("/risk-score", headers=auth_headers)
+
     assert response.status_code == 200
     data = response.json()
     assert "risk_score" in data
@@ -358,7 +363,7 @@ def test_get_my_risk_score(client, test_user_profile, auth_headers):
 
 def test_get_risk_score_no_profile(client, auth_headers):
     """Test getting risk score without borrower profile"""
-    response = client.get("/borrower/profile/me/risk-score", headers=auth_headers)
+    response = client.get("/risk-score", headers=auth_headers)
     
     assert response.status_code == 404
     data = response.json()
@@ -527,7 +532,7 @@ def test_create_borrower_profile_invalid_employment_type(client, test_user_profi
     assert response.status_code == 422
 
 
-def test_risk_score_changes_after_update(client, test_user_profile, auth_headers):
+def test_risk_score_changes_after_update(client, test_borrower_profile, auth_headers):
     """Test that risk score changes after profile update"""
     # Create student profile
     client.post(
@@ -540,7 +545,7 @@ def test_risk_score_changes_after_update(client, test_user_profile, auth_headers
     )
     
     # Get initial risk score
-    response1 = client.get("/borrower/profile/me/risk-score", headers=auth_headers)
+    response1 = client.get("/risk-score", headers=auth_headers)
    
     assert response1.status_code == 200
     initial_score = response1.json()["risk_score"]
@@ -557,7 +562,7 @@ def test_risk_score_changes_after_update(client, test_user_profile, auth_headers
     assert update_response.status_code == 200
     
     # Get updated risk score
-    response2 = client.get("/borrower/profile/me/risk-score", headers=auth_headers)
+    response2 = client.get("/risk-score", headers=auth_headers)
     assert response2.status_code == 200
     updated_score = response2.json()["risk_score"]
     
