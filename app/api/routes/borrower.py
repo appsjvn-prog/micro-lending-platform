@@ -255,35 +255,6 @@ def _build_profile_response(profile: BorrowerProfile, risk_result: dict, include
     
     return response
     
-def _build_borrower_profile_response(profile: BorrowerProfile, risk_result: dict) -> dict:
-    """Build response for borrower's own profile (full details)"""
-    response = {
-        "id": profile.id,
-        "user_id": profile.user_id,
-        "employment_type": profile.employment_type.value if profile.employment_type else None,
-        "monthly_income": float(profile.monthly_income) if profile.monthly_income else None,
-        "employer_name": profile.employer_name,
-        "total_work_experience_years": profile.total_work_experience_years,
-        "current_job_tenure_months": profile.current_job_tenure_months,
-        "is_profile_complete": profile.is_profile_complete,
-        "created_at": profile.created_at,   
-        "updated_at": profile.updated_at,
-        "credit_score": None,
-        "existing_loan_count": None,
-        "total_existing_liabilities": None,
-        "user": None,
-    }
-    
-    if risk_result and "error" not in risk_result:
-        response["risk_score"] = risk_result.get("score")
-        response["risk_level"] = risk_result.get("risk_level")
-        response["risk_breakdown"] = risk_result.get("breakdown")
-    else:
-        response["risk_score"] = None
-        response["risk_level"] = None
-    
-    return response
-
 
 def _build_lender_view_response(profile: BorrowerProfile, risk_result: dict) -> dict:
     """Build response for lender view (limited data)"""

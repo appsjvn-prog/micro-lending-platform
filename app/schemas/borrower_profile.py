@@ -57,8 +57,6 @@ class BorrowerProfileResponse(BaseModel):
     is_profile_complete: bool
     created_at: datetime
     updated_at: datetime
-    user: Optional[UserResponse] = None
-
     risk_score: Optional[float] = None
     risk_level: Optional[str] = None
     risk_breakdown: Optional[dict] = None
