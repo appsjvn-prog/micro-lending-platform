@@ -35,7 +35,7 @@ from app.core.exceptions import (
 
 router = APIRouter(prefix="/kyc", tags=["KYC"])
 
-# ---------- UNIFIED REVIEW SCHEMA ----------
+# UNIFIED REVIEW SCHEMA 
 class DocumentReviewItem(BaseModel):
     document_id: UUID
     is_verified: bool
@@ -47,7 +47,7 @@ class KYCUnifiedReviewRequest(BaseModel):
     rejection_reason: Optional[str] = None
     documents: Optional[List[DocumentReviewItem]] = None
 
-# ---------- USER ENDPOINTS ----------
+# USER ENDPOINTS 
 @router.post("/submit", response_model=KYCSubmitResponse, status_code=status.HTTP_201_CREATED)
 def submit_kyc(
     current_user: User = Depends(get_current_user),
@@ -136,7 +136,7 @@ def upload_kyc_document(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-# ---------- UNIFIED GET ENDPOINT ----------
+#  UNIFIED GET ENDPOINT 
 @router.get("")
 def get_kyc(
     kyc_id: Optional[UUID] = Query(None, description="Get specific KYC by ID"),
@@ -282,7 +282,7 @@ def get_kyc(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-# ---------- UNIFIED REVIEW ENDPOINT ----------
+# UNIFIED REVIEW ENDPOINT
 @router.patch("/{kyc_id}/review")
 def review_kyc(
     kyc_id: UUID,
@@ -320,7 +320,7 @@ def review_kyc(
             "overall_updated": False
         }
         
-        # ========== 1. REVIEW INDIVIDUAL DOCUMENTS ==========
+        # 1. REVIEW INDIVIDUAL DOCUMENTS 
         if review_data.documents:
             for doc_review in review_data.documents:
                 doc = db.query(KYCDocument).filter(
@@ -366,7 +366,7 @@ def review_kyc(
                 
                 db.commit()
         
-        # ========== 2. REVIEW OVERALL KYC ==========
+        #  2. REVIEW OVERALL KYC 
         if review_data.status:
             if review_data.status not in [KYCStatus.VERIFIED, KYCStatus.REJECTED]:
                 raise AppException("Status must be VERIFIED or REJECTED", 400)
@@ -399,7 +399,7 @@ def review_kyc(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-# ---------- STATS (Keep - useful for admin) ----------
+# STATS (Keep - useful for admin) 
 @router.get("/stats", response_model=KYCStatsResponse)
 def get_kyc_stats(
     admin: User = Depends(get_current_admin),

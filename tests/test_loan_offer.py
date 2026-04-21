@@ -11,7 +11,7 @@ from app.core.security import get_password_hash, create_access_token
 from app.core.timezone import utc_now
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_lender(db):
@@ -184,7 +184,7 @@ def test_user(db):
     return user
 
 
-# ============== TEST CREATE LOAN OFFER ==============
+#  TEST CREATE LOAN OFFER 
 
 def test_create_loan_offer_success(client, test_user_profile, test_lender_profile, auth_headers, sample_loan_offer_data):
     """Test successful loan offer creation"""
@@ -370,7 +370,7 @@ def test_create_loan_offer_unverified_lender(client, test_user_profile, db):
     assert response.status_code == 403
 
 
-# ============== TEST GET LOAN OFFERS ==============
+#  TEST GET LOAN OFFERS 
 
 def test_get_all_loan_offers_public(client, test_loan_offer):
     """Test getting all loan offers (public - no auth)"""
@@ -434,7 +434,7 @@ def test_get_expired_loan_offer(client, test_loan_offer, db):
     assert "expired" in str(data).lower()
 
 
-# ============== TEST UPDATE LOAN OFFER ==============
+#  TEST UPDATE LOAN OFFER 
 
 def test_update_loan_offer_success(client, test_loan_offer, auth_headers):
     """Test successfully updating loan offer"""
@@ -537,7 +537,7 @@ def test_update_loan_offer_as_admin(client, test_loan_offer, admin_auth_headers)
     assert data["offer_name"] == "Admin Updated Offer"
 
 
-# ============== TEST DEACTIVATE LOAN OFFER ==============
+#  TEST DEACTIVATE LOAN OFFER 
 
 def test_deactivate_loan_offer_success(client, test_loan_offer, auth_headers):
     """Test deactivating a loan offer"""
@@ -590,7 +590,7 @@ def test_deactivate_loan_offer_as_admin(client, test_loan_offer, admin_auth_head
     assert data["success"] == True
 
 
-# ============== TEST UNAUTHORIZED ACCESS ==============
+#  TEST UNAUTHORIZED ACCESS 
 
 def test_unauthorized_access_no_token(client):
     """Test accessing loan offers without authentication (GET is public)"""
@@ -607,7 +607,7 @@ def test_unauthorized_access_no_token(client):
     assert response.status_code == 401
 
 
-# ============== TEST EDGE CASES ==============
+#  TEST EDGE CASES 
 
 def test_create_loan_offer_with_expiry(client, test_user_profile, test_lender_profile, auth_headers):
     """Test creating loan offer with custom expiry date"""

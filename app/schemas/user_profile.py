@@ -16,7 +16,7 @@ class UserProfileBase(BaseModel):
     gender: Gender
     email: EmailStr
     
-    # 👇 Using your existing PhoneNumber schema
+    
     mobile: PhoneNumber
     alternate_mobile: Optional[PhoneNumber] = None
     
@@ -76,10 +76,7 @@ class UserProfileResponse(UserProfileBase):
 
     class Config:
         from_attributes = True
-        json_encoders = {
-            date: lambda v: v.isoformat(),
-            datetime: lambda v: v.isoformat()
-        }
+       
 
 # Minimal response for creation
 class UserProfileMinimalResponse(BaseModel):

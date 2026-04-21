@@ -105,7 +105,7 @@ app.include_router(loan_router)
 app.include_router(transaction_router)
 
 
-# ---------- Root Endpoints ----------
+#  Root Endpoints 
 @app.get("/")
 def root():
     return {

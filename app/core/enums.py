@@ -8,9 +8,9 @@ class CaseInsensitiveEnum(str, Enum):
     def _missing_(cls, value: Any) -> Optional["CaseInsensitiveEnum"]:
         """Handle case-insensitive lookup"""
         if isinstance(value, str):
-            value_upper = value.upper()
+            normalized = value.upper().replace(" ","_").replace("-","_")
             for member in cls:
-                if member.value == value_upper:
+                if member.value == normalized:
                     return member
         return super()._missing_(value)
     
@@ -20,7 +20,8 @@ class CaseInsensitiveEnum(str, Enum):
         if not value:
             return None
         try:
-            return cls(value.upper())
+            normalized = value.upper().replace(" ","_").replace("-","_")
+            return cls(normalized)
         except ValueError:
             return None
     

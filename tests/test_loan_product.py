@@ -6,7 +6,7 @@ from app.models.loan_product import LoanProduct, InterestType, LoanProductStatus
 from app.core.security import get_password_hash, create_access_token
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_admin(db):
@@ -102,7 +102,7 @@ def test_loan_product(db, sample_loan_product_data):
     return product
 
 
-# ============== TEST CREATE LOAN PRODUCT ==============
+#  TEST CREATE LOAN PRODUCT 
 
 def test_create_loan_product_success(client, admin_auth_headers, sample_loan_product_data):
     """Test successful loan product creation by admin"""
@@ -227,7 +227,7 @@ def test_create_loan_product_unauthorized(client, sample_loan_product_data):
     assert response.status_code == 401
 
 
-# ============== TEST GET LOAN PRODUCTS ==============
+#  TEST GET LOAN PRODUCTS 
 
 def test_get_all_loan_products(client, test_loan_product):
     """Test getting all loan products (public - no auth required)"""
@@ -286,7 +286,7 @@ def test_get_loan_product_invalid_id(client):
     assert "invalid" in error_msg or "format" in error_msg
 
 
-# ============== TEST UPDATE LOAN PRODUCT ==============
+#  TEST UPDATE LOAN PRODUCT 
 
 def test_update_loan_product_success(client, admin_auth_headers, test_loan_product):
     """Test successfully updating loan product"""
@@ -391,7 +391,7 @@ def test_update_loan_product_invalid_amount_range(client, admin_auth_headers, te
     # Schema validation returns 422 (Unprocessable Entity)
     assert response.status_code == 422
 
-# ============== TEST ACTIVATE/DEACTIVATE LOAN PRODUCT ==============
+#  TEST ACTIVATE/DEACTIVATE LOAN PRODUCT 
 
 def test_activate_loan_product(client, admin_auth_headers, test_loan_product):
     """Test activating a loan product"""
@@ -473,7 +473,7 @@ def test_deactivate_loan_product_success(client, admin_auth_headers, test_loan_p
     data = response.json()
     assert data["status"] == "INACTIVE"
 
-# ============== TEST EDGE CASES ==============
+#  TEST EDGE CASES 
 
 def test_create_loan_product_with_boundary_values(client, admin_auth_headers):
     """Test creating loan product with boundary values"""

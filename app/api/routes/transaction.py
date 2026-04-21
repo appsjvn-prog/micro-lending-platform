@@ -88,13 +88,13 @@ def make_flexible_repayment(
                     raise LoanNotDisbursedException()
                 raise RepaymentValidationException(f"Loan cannot be repaid in {loan.status} status")
         
-        # ========== 2. GET PENDING SCHEDULES ==========
+        # 2. GET PENDING SCHEDULES 
         pending_schedules = get_pending_schedules(loan_id, db)
 
         if not pending_schedules:
             raise RepaymentValidationException("No pending installments to repay")
         
-        # ========== 3. CHECK OVERPAYMENT ==========
+        # 3. CHECK OVERPAYMENT 
 
         total_remaining = calculate_total_remaining(pending_schedules)
 
@@ -105,7 +105,7 @@ def make_flexible_repayment(
 
         if request.amount <= 0:
             raise RepaymentValidationException("Payment amount must be greater than zero")
-        # ========== 4. GET BANK ACCOUNTS ==========
+        #  4. GET BANK ACCOUNTS 
 
         borrower_account = db.query(BankAccount).filter(
             BankAccount.user_id == loan.borrower_id,
@@ -122,9 +122,7 @@ def make_flexible_repayment(
         if not borrower_account or not lender_account:
             raise ValidationException("One or both bank accounts not found")
         
-        # ========== 5. PROCESS PAYMENT ACROSS SCHEDULES ==========
-
-        remaining_amount = request.amount
+        #  5. PROCESS PAYMENT ACROSS SCHEDULES        remaining_amount = request.amount
         allocations = []
 
         for schedule in pending_schedules:
@@ -171,7 +169,7 @@ def make_flexible_repayment(
                 })
                 remaining_amount = 0
 
-        # ========== 6. CREATE TRANSACTION RECORD ==========  
+        # 6. CREATE TRANSACTION RECORD   
 
         transaction = Transaction(
             id=uuid.uuid4(),
@@ -187,7 +185,7 @@ def make_flexible_repayment(
         )
         db.add(transaction)
 
-        # ========== 7. UPDATE LOAN STATUS ==========
+        #  7. UPDATE LOAN STATUS 
 
         all_paid = all (s.status == RepaymentStatus.PAID for s in pending_schedules)
 
@@ -203,14 +201,14 @@ def make_flexible_repayment(
 
         loan.updated_at = utc_now()
 
-        # ========== 8. COMMIT TO DATABASE ==========
+        #  8. COMMIT TO DATABASE 
         db.commit()
         
-        # ========== 9. CALCULATE NEW REMAINING BALANCE ==========
+        #  9. CALCULATE NEW REMAINING BALANCE 
 
         new_remaining = calculate_total_remaining(pending_schedules)
 
-        # ========== 10. RETURN RESPONSE ==========
+        # 10. RETURN RESPONSE 
         return FlexibleRepaymentResponse(
             success=True,
             loan_id=str(loan_id),

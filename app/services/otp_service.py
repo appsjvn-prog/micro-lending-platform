@@ -75,8 +75,8 @@ class OTPService:
     def send_sms_otp(self, phone: str, otp: str, purpose: OTPPurpose, background_tasks: BackgroundTasks):
         """Send OTP via SMS"""
         # For now, just print to console (we'll implement actual SMS later)
-        print(f"\n📱 SMS OTP for {phone}: {otp} (Purpose: {purpose})\n")
-        print(f"⏰ Expires in 5 minutes")
+        print(f"\n SMS OTP for {phone}: {otp} (Purpose: {purpose})\n")
+        print(f" Expires in 5 minutes")
         
         # TODO: Implement actual SMS sending using Twilio
         background_tasks.add_task(self._send_sms_task, phone, otp, purpose)

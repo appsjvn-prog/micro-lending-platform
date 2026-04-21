@@ -6,17 +6,17 @@ from uuid import UUID
 from app.models.otp import OTPPurpose
 from app.schemas.user import PhoneNumber
 
-# ---------- Verify OTP Request ----------
+# Verify OTP Request 
 class OTPVerifyRequest(BaseModel):
     user_id: UUID
     otp_code: str = Field(..., min_length=4, max_length=6)
 
-# ---------- Resend OTP Request ----------
+#  Resend OTP Request
 class OTPResendRequest(BaseModel):
    
     user_id: UUID
 
-# ---------- OTP Response ----------
+#  OTP Response 
 class OTPSendResponse(BaseModel):
     message: str
     expires_in: int = 300  # 5 minutes in seconds

@@ -43,7 +43,7 @@ from app.services.risk_score import RiskScoreCalculator
 
 router = APIRouter(prefix="/loan-applications", tags=["Loan Applications"])
 
-# ============== HELPER FUNCTIONS ==============
+# HELPER FUNCTIONS
 def generate_reference_number(prefix: str) -> str:
     """Generate unique reference number"""
     timestamp = utc_now().strftime("%Y%m%d%H%M%S")
@@ -104,7 +104,7 @@ def build_admin_response(app: LoanApplication):
         }
     }
 
-# ============== CREATE APPLICATION ==============
+#CREATE APPLICATION 
 
 @router.post("", response_model=LoanApplicationMinimalResponse, status_code=status.HTTP_201_CREATED)
 def create_loan_application(
@@ -204,7 +204,7 @@ def create_loan_application(
         )
 
 
-# ============== GET APPLICATIONS ==============
+#GET APPLICATIONS 
 
 @router.get("", response_model=List[Union[BorrowerLoanApplicationResponse, LenderLoanApplicationResponse, LoanApplicationResponse]])
 def get_loan_applications(
@@ -316,7 +316,7 @@ def get_loan_applications(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-# ============== UPDATE APPLICATION ==============
+# UPDATE APPLICATION 
 
 @router.put("/{application_id}", response_model=LoanApplicationMinimalResponse)
 def update_loan_application(
@@ -410,7 +410,7 @@ def update_loan_application(
         )
 
 
-# ============== REVIEW APPLICATION (LENDER) ==============
+# REVIEW APPLICATION (LENDER) 
 @router.post("/{application_id}/review", response_model=LoanApplicationResponse)
 def review_application(
     application_id: UUID,
@@ -486,7 +486,7 @@ def review_application(
                 f"Maximum {MAX_ACTIVE_LOANS} active loans allowed per borrower."
             )
         
-        # ========== ACCEPTED: Create Loan, Disburse, Generate Schedule ==========
+        # ACCEPTED: Create Loan, Disburse, Generate Schedule 
         
         # Calculate loan details (simple interest)
         total_interest = application.requested_amount * (Decimal(str(offer.interest_rate)) / 100) * (Decimal(application.requested_tenure) / 12)
@@ -582,7 +582,7 @@ def review_application(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
     
-# ============== CANCEL APPLICATION (BORROWER) ==============
+#  CANCEL APPLICATION (BORROWER) 
 
 @router.post("/{application_id}/cancel", response_model=LoanApplicationMinimalResponse)
 def cancel_application(

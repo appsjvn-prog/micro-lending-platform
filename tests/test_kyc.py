@@ -7,7 +7,7 @@ from app.models.kyc import KYC, KYCStatus, KYCDocument, KYCDocumentType
 from app.core.security import get_password_hash, create_access_token
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_user(db):
@@ -105,7 +105,7 @@ def test_kyc_document(db, test_kyc):
     return doc
 
 
-# ============== TEST SUBMIT KYC ==============
+#  TEST SUBMIT KYC 
 
 def test_submit_kyc_success(client, test_user_profile, auth_headers):
     """Test successful KYC submission"""
@@ -138,7 +138,7 @@ def test_submit_kyc_unauthorized(client):
     assert response.status_code == 401
 
 
-# ============== TEST UPLOAD DOCUMENTS ==============
+#  TEST UPLOAD DOCUMENTS 
 
 def test_upload_document_success(client, test_kyc, auth_headers):
     """Test successful document upload"""
@@ -228,7 +228,7 @@ def test_upload_document_after_verification(client, test_kyc, auth_headers, admi
     assert "already verified" in str(data).lower()
 
 
-# ============== TEST GET KYC ==============
+#  TEST GET KYC 
 
 def test_get_my_kyc(client, test_kyc, auth_headers):
     """Test getting own KYC status"""
@@ -268,7 +268,7 @@ def test_admin_get_kyc_by_id(client, test_kyc, admin_auth_headers):
     assert data["id"] == str(test_kyc.id)
 
 
-# ============== TEST REVIEW KYC ==============
+#  TEST REVIEW KYC 
 
 def test_admin_verify_kyc(client, test_kyc, test_kyc_document, admin_auth_headers):
     """Test admin verifying KYC"""
@@ -353,7 +353,7 @@ def test_review_nonexistent_kyc(client, admin_auth_headers):
     assert "not found" in str(data).lower()
 
 
-# ============== TEST KYC STATS ==============
+#  TEST KYC STATS 
 
 def test_get_kyc_stats(client, test_kyc, admin_auth_headers):
     """Test getting KYC statistics (admin only)"""
@@ -374,7 +374,7 @@ def test_non_admin_cannot_get_stats(client, auth_headers):
     assert response.status_code == 403
 
 
-# ============== TEST RE-UPLOAD REJECTED DOCUMENT ==============
+#  TEST RE-UPLOAD REJECTED DOCUMENT 
 
 def test_reupload_rejected_document(client, test_kyc, auth_headers, admin_auth_headers):
     """Test re-uploading a rejected document"""
@@ -419,7 +419,7 @@ def test_reupload_rejected_document(client, test_kyc, auth_headers, admin_auth_h
     assert data["doc_type"] == "PAN"
 
 
-# ============== TEST EDGE CASES ==============
+#  TEST EDGE CASES 
 
 def test_upload_document_invalid_type(client, test_kyc, auth_headers):
     """Test uploading document with invalid type"""

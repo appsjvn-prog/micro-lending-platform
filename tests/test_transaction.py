@@ -16,7 +16,7 @@ from app.core.security import get_password_hash, create_access_token
 from app.core.timezone import utc_now
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_borrower(db):
@@ -221,7 +221,7 @@ def sample_repayment_data(test_loan):
     }
 
 
-# ============== TEST FLEXIBLE REPAYMENT ==============
+#  TEST FLEXIBLE REPAYMENT 
 
 def test_flexible_repayment_success(client, test_loan, test_repayment_schedules, 
                                      test_borrower_account, test_lender_account, 
@@ -349,7 +349,7 @@ def test_flexible_repayment_negative_amount(client, test_loan, borrower_auth_hea
     data = response.json()
     assert "greater than" in str(data).lower()
 
-# ============== TEST GET TRANSACTIONS ==============
+#  TEST GET TRANSACTIONS 
 
 def test_get_loan_transactions(client, test_loan, test_repayment_schedules,
                                 test_borrower_account, test_lender_account,
@@ -440,7 +440,7 @@ def test_get_my_transactions_no_account(client, test_borrower, db):
     assert data == []
 
 
-# ============== TEST UNAUTHORIZED ACCESS ==============
+#  TEST UNAUTHORIZED ACCESS 
 
 def test_unauthorized_access_no_token(client):
     fake_id = uuid.uuid4()
@@ -452,7 +452,7 @@ def test_unauthorized_access_no_token(client):
     assert response.status_code == 401
 
 
-# ============== TEST PARTIAL PAYMENT SCENARIOS ==============
+#  TEST PARTIAL PAYMENT SCENARIOS 
 
 def test_partial_payment_multiple_installments(client, test_loan, test_repayment_schedules,
                                                 test_borrower_account, test_lender_account,

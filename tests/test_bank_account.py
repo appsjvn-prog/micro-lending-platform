@@ -7,7 +7,7 @@ from app.models.bank_account import BankAccount, AccountType
 from app.core.security import get_password_hash, create_access_token
 from datetime import date
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_user(db):
@@ -109,7 +109,7 @@ def test_bank_account(db, test_user, sample_bank_account_data):
     return account
 
 
-# ============== TEST CREATE BANK ACCOUNT ==============
+#  TEST CREATE BANK ACCOUNT 
 
 def test_create_bank_account_success(client, test_user_profile, auth_headers, sample_bank_account_data):
     """Test successful bank account creation"""
@@ -214,7 +214,7 @@ def test_create_bank_account_invalid_account_number(client, test_user_profile, a
     assert response.status_code == 422
 
 
-# ============== TEST GET BANK ACCOUNTS ==============
+#  TEST GET BANK ACCOUNTS 
 
 def test_get_my_bank_accounts(client, test_bank_account, auth_headers):
     """Test getting all bank accounts for user"""
@@ -225,7 +225,7 @@ def test_get_my_bank_accounts(client, test_bank_account, auth_headers):
     assert len(data) >= 1
     assert data[0]["account_number"] == "123456789012"
 
-# ============== TEST UPDATE BANK ACCOUNT ==============
+#  TEST UPDATE BANK ACCOUNT 
 
 def test_update_bank_account_success(client, test_bank_account, auth_headers):
     """Test successfully updating bank account"""
@@ -286,7 +286,7 @@ def test_update_nonexistent_bank_account(client, auth_headers):
     assert response.status_code == 404
 
 
-# ============== TEST DELETE BANK ACCOUNT ==============
+#  TEST DELETE BANK ACCOUNT 
 
 def test_delete_bank_account_success(client, test_bank_account, auth_headers):
     """Test successfully deleting bank account"""
@@ -329,7 +329,7 @@ def test_delete_nonexistent_bank_account(client, auth_headers):
     assert response.status_code == 404
 
 
-# ============== TEST VERIFY BANK ACCOUNT (ADMIN) ==============
+#  TEST VERIFY BANK ACCOUNT (ADMIN) 
 
 def test_admin_verify_bank_account(client, test_bank_account, admin_auth_headers):
     """Test admin verifying a bank account"""
@@ -356,7 +356,7 @@ def test_non_admin_cannot_verify(client, test_bank_account, auth_headers):
     assert response.status_code == 403
 
 
-# ============== TEST UNAUTHORIZED ACCESS ==============
+#  TEST UNAUTHORIZED ACCESS 
 
 def test_unauthorized_access_no_token(client):
     """Test accessing bank accounts without authentication"""

@@ -224,7 +224,7 @@ def delete_borrower_profile(
         "message": "Borrower profile deleted successfully"
     }
 
-# ============== HELPER FUNCTIONS ==============
+#HELPER FUNCTIONS
 
 def _build_profile_response(profile: BorrowerProfile, risk_result: dict, include_sensitive: bool = False) -> dict:
     """Build response for borrower profile with risk score"""

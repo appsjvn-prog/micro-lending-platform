@@ -12,7 +12,7 @@ from app.core.security import get_password_hash, create_access_token
 from app.core.timezone import utc_now
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_user(db: Session):
@@ -122,7 +122,7 @@ def test_borrower_profile(db: Session, test_user):
     return profile
 
 
-# ============== TEST CREATE BORROWER PROFILE ==============
+#  TEST CREATE BORROWER PROFILE 
 
 def test_create_borrower_profile_success(client, test_user_profile, auth_headers):
     """Test successful borrower profile creation"""
@@ -265,7 +265,7 @@ def test_create_borrower_profile_lender_forbidden(client, test_user_profile, len
     assert response.status_code == 403
 
 
-# ============== TEST GET BORROWER PROFILES ==============
+#  TEST GET BORROWER PROFILES 
 
 def test_get_my_borrower_profile(client, test_user_profile, auth_headers):
     """Test getting own borrower profile"""
@@ -347,7 +347,7 @@ def test_get_borrower_profiles_no_profile(client, auth_headers):
     assert data == []  # Empty list
 
 
-# ============== TEST GET RISK SCORE ==============
+#  TEST GET RISK SCORE 
 
 def test_get_my_risk_score(client,test_user_profile, test_borrower_profile, auth_headers):
     """Test getting risk score endpoint"""
@@ -370,7 +370,7 @@ def test_get_risk_score_no_profile(client, auth_headers):
     assert "not found" in str(data).lower()
 
 
-# ============== TEST UPDATE BORROWER PROFILE ==============
+#  TEST UPDATE BORROWER PROFILE 
 
 def test_update_borrower_profile_success(client, test_user_profile, auth_headers):
     """Test updating borrower profile"""
@@ -444,7 +444,7 @@ def test_update_borrower_profile_student_to_salaried(client, test_user_profile, 
     assert data["monthly_income"] == 50000.0
 
 
-# ============== TEST DELETE BORROWER PROFILE ==============
+#  TEST DELETE BORROWER PROFILE 
 
 def test_delete_borrower_profile_success(client, test_user_profile, auth_headers):
     """Test deleting borrower profile"""
@@ -476,7 +476,7 @@ def test_delete_borrower_profile_not_found(client, auth_headers):
     assert "not found" in str(data).lower()
 
 
-# ============== TEST UNAUTHORIZED ACCESS ==============
+#  TEST UNAUTHORIZED ACCESS 
 
 def test_unauthorized_access_no_token(client):
     """Test accessing borrower profiles without authentication"""
@@ -499,7 +499,7 @@ def test_lender_cannot_create_borrower_profile(client, test_user_profile, lender
     assert response.status_code == 403
 
 
-# ============== TEST EDGE CASES ==============
+#  TEST EDGE CASES 
 
 def test_create_borrower_profile_with_max_values(client, test_user_profile, auth_headers):
     """Test creating profile with maximum field values"""

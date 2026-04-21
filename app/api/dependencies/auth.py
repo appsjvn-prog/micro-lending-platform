@@ -11,7 +11,7 @@ from app.models.user import User, UserStatus
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
     
-# ---------- WEEK 3: Proper JWT Authentication ----------
+# JWT Authentication 
 async def get_optional_current_user(
     token: Optional[str] = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
@@ -83,13 +83,11 @@ async def get_current_active_user(
 async def get_current_admin(
     current_user: User = Depends(get_current_active_user)
 ) -> User:
-    """
-    🔜 WEEK 3: Verify current user is an admin
-    """
+    
     if current_user.role != "ADMIN":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin access required"
         )
-    return current_user
+    return current_user 
 

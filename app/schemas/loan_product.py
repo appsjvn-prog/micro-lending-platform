@@ -6,13 +6,13 @@ from decimal import Decimal
 
 from app.models.loan_product import InterestType, LoanProductStatus, RepaymentDaySource, RepaymentFrequency
 
-# ---------- Platform Limits (only for amount and tenure) ----------
+# Platform Limits (only for amount and tenure)
 MIN_LOAN_AMOUNT = 5000
 MAX_LOAN_AMOUNT = 5000000
 MIN_TENURE_MONTHS = 1
 MAX_TENURE_MONTHS = 60
 
-# ---------- Base Schema ----------
+#Base Schema 
 class LoanProductBase(BaseModel):
     """Base schema for loan product"""
     name: str = Field(..., min_length=3, max_length=100, example="Personal Loan"    )
@@ -48,12 +48,12 @@ class LoanProductBase(BaseModel):
             raise ValueError('max_interest_rate must be greater than min_interest_rate')
         return v
 
-# ---------- Create Schema ----------
+#  Create Schema 
 class LoanProductCreate(LoanProductBase):
     """Schema for creating a new loan product"""
     status: LoanProductStatus = LoanProductStatus.ACTIVE
 
-# ---------- Update Schema ----------
+#  Update Schema 
 class LoanProductUpdate(BaseModel):
     """Schema for updating loan product - all fields optional"""
     name: Optional[str] = Field(None, min_length=3, max_length=100, example="Personal Loan")
@@ -87,7 +87,7 @@ class LoanProductUpdate(BaseModel):
                 raise ValueError('max_interest_rate must be greater than min_interest_rate')
         return v
 
-# ---------- Response Schema ----------
+# Response Schema 
 class LoanProductResponse(LoanProductBase):
     """Complete loan product details sent back to client"""
     model_config = ConfigDict(from_attributes=True)

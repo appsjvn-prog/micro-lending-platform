@@ -5,16 +5,9 @@ from typing import Optional, List
 from decimal import Decimal
 from enum import Enum
 
-class TransactionType(str, Enum):
-    DISBURSEMENT = "DISBURSEMENT"
-    REPAYMENT = "REPAYMENT"
+from app.models.transaction import TransactionStatus,TransactionType
 
-
-class TransactionStatus(str, Enum):
-    INITIATED = "INITIATED"
-    SUCCESS = "SUCCESS"
-
-# ---------- Request Schemas ----------
+# Request Schemas
 
 class RepaymentRequest(BaseModel):
     loan_id: UUID
@@ -22,7 +15,7 @@ class RepaymentRequest(BaseModel):
     schedule_id: int = Field(..., description="Installment number to repay (1, 2, 3, etc.)")
     notes: Optional[str] = None
 
-# ---------- Response Schemas ---------
+#  Response Schemas 
 
 class TransactionResponse(BaseModel):
     id: UUID
@@ -60,7 +53,7 @@ class RepaymentResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# ============== FLEXIBLE REPAYMENT SCHEMAS ==============
+#  FLEXIBLE REPAYMENT SCHEMAS 
 
 class FlexibleRepaymentRequest(BaseModel):
     """Request for flexible repayment - pay ANY amount"""

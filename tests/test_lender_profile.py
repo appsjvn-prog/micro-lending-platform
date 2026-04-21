@@ -11,7 +11,7 @@ from app.models.lender_profile import LenderProfile, RiskAppetite
 from app.core.security import get_password_hash, create_access_token
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_lender(db: Session):
@@ -117,7 +117,7 @@ def sample_lender_data():
     }
 
 
-# ============== TEST CREATE LENDER PROFILE ==============
+#  TEST CREATE LENDER PROFILE 
 
 def test_create_lender_profile_success(client, test_user_profile, auth_headers, sample_lender_data):
     """Test successful lender profile creation"""
@@ -225,7 +225,7 @@ def test_create_lender_profile_missing_fields(client, test_user_profile, auth_he
     assert response.status_code == 422
 
 
-# ============== TEST GET LENDER PROFILES ==============
+#  TEST GET LENDER PROFILES 
 
 def test_get_own_lender_profile(client, test_user_profile, auth_headers, sample_lender_data):
     """Test lender getting their own profile"""
@@ -317,7 +317,7 @@ def test_borrower_view_lender_profile(client, test_user_profile, auth_headers, t
     assert first_lender["is_verified"] == True
 
 
-# ============== TEST UPDATE LENDER PROFILE ==============
+#  TEST UPDATE LENDER PROFILE 
 
 def test_update_lender_profile_success(client, test_user_profile, auth_headers, sample_lender_data):
     """Test successfully updating lender profile"""
@@ -388,7 +388,7 @@ def test_update_lender_profile_partial(client, test_user_profile, auth_headers, 
     assert data["risk_appetite"] == "MEDIUM"  # Unchanged
 
 
-# ============== TEST VERIFY LENDER PROFILE (ADMIN) ==============
+#  TEST VERIFY LENDER PROFILE (ADMIN) 
 
 def test_verify_lender_profile_success(client, test_user_profile, auth_headers, admin_auth_headers, sample_lender_data):
     """Test admin verifying lender profile"""
@@ -449,7 +449,7 @@ def test_verify_already_verified_profile(client, test_user_profile, auth_headers
     assert response2.json()["is_verified"] == True
 
 
-# ============== TEST EDGE CASES ==============
+#  TEST EDGE CASES 
 
 def test_create_lender_profile_with_max_length_fields(client, test_user_profile, auth_headers):
     """Test creating profile with maximum field lengths"""
@@ -494,7 +494,7 @@ def test_lender_profile_risk_appetite_case_insensitive(client, test_user_profile
     assert profile_data["risk_appetite"] == "LOW"
 
 
-# ============== TEST DELETE LENDER PROFILE ==============
+#  TEST DELETE LENDER PROFILE 
 
 def test_delete_lender_profile_success(client, test_user_profile, auth_headers, sample_lender_data):
     """Test successful deletion of lender profile"""

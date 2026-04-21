@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-# ==================== BASE EXCEPTION ====================
+#  BASE EXCEPTION 
 
 class AppException(Exception):
     """Base application exception"""
@@ -15,7 +15,7 @@ class AppException(Exception):
         self.status_code = status_code
         self.error_code = error_code or self.__class__.__name__
 
-# ==================== EXISTING EXCEPTIONS (KEEP THESE) ====================
+#  EXISTING EXCEPTIONS 
 
 class NotFoundException(AppException):
     def __init__(self, resource: str):
@@ -39,7 +39,7 @@ class ValidationException(AppException):
             error_code="VALIDATION_ERROR"
         )
 
-# ==================== NEW EXCEPTIONS FOR YOUR USE CASE ====================
+#  NEW EXCEPTIONS FOR YOUR USE CASE 
 
 class AuthenticationException(AppException):
     """For login failures, invalid tokens"""
@@ -481,7 +481,7 @@ class LoanNotDisbursedException(AppException):
             status_code=status.HTTP_400_BAD_REQUEST,
             error_code="LOAN_NOT_DISBURSED"
         )
-# ==================== EXCEPTION HANDLERS ====================
+#  EXCEPTION HANDLERS 
 
 async def app_exception_handler(request: Request, exc: AppException):
     """Handle custom app exceptions"""

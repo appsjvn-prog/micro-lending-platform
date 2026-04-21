@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional, List
 from app.models.kyc import KYCStatus, KYCDocumentType
 
-# ---------- POST Response Schemas (Minimal) ----------
+#  POST Response Schemas (Minimal) 
 class KYCSubmitResponse(BaseModel):
     """Response after submitting KYC"""
     id: UUID
@@ -23,7 +23,7 @@ class KYCDocumentUploadResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# ---------- GET Response Schemas ----------
+#  GET Response Schemas 
 class KYCDocumentResponse(BaseModel):
     """Document details for GET requests"""
     id: UUID
@@ -78,7 +78,7 @@ class KYCListResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# ---------- Request Schemas (Input Only) ----------
+#  Request Schemas (Input Only) 
 class KYCDocumentCreate(BaseModel):
     """What user sends when uploading document"""
     doc_type: KYCDocumentType
@@ -100,7 +100,7 @@ class KYCDocumentReviewRequest(BaseModel):
     is_verified: bool
     rejection_reason: Optional[str] = Field(None, max_length=500)
 
-# ---------- Stats ----------
+# Stats 
 class KYCStatsResponse(BaseModel):
     """Admin dashboard statistics"""
     total_submissions: int

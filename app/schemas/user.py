@@ -9,7 +9,7 @@ from phonenumbers.phonenumberutil import NumberParseException
 
 from app.models.user import UserRole, UserStatus
 
-# ---------- Phone Number Schema ----------
+# Phone Number Schema
 class PhoneNumber(BaseModel):
     """Phone number with separate country code and national number"""
     country_code: str = Field(..., description="Country code with '+', e.g., '+91'")
@@ -33,7 +33,7 @@ class PhoneNumber(BaseModel):
         """Return full E.164 formatted number"""
         return f"{self.country_code}{self.national_number}"
 
-# ---------- Base Schema ----------
+#Base Schema
 class UserBase(BaseModel):
     """Base schema with fields common to all user operations"""
     email: EmailStr
@@ -52,7 +52,7 @@ class UserBase(BaseModel):
             raise ValueError(f'Invalid phone number format: {str(e)}')
         return self
 
-# ---------- Update Schema ----------
+# Update Schema
 class UserUpdate(BaseModel):
     """Schema for updating user - all fields optional"""
     email: Optional[EmailStr] = None
@@ -71,7 +71,7 @@ class UserUpdate(BaseModel):
                 raise ValueError(f'Invalid phone number format: {str(e)}')
         return self
 
-# ---------- Create Schema ----------
+#  Create Schema 
 class UserCreate(UserBase):
     """Schema for creating a new user - includes password"""
     password: str = Field(..., min_length=8, max_length=50, description="Password must be 8-50 characters")
@@ -91,7 +91,7 @@ class UserCreate(UserBase):
             raise ValueError('Password must contain at least one digit')
         return v
 
-# ---------- Core Response Schema ----------
+#  Core Response Schema 
 class UserResponse(BaseModel):
     """Schema for user data sent back to client - only server-generated fields"""
     model_config = ConfigDict(from_attributes=True)
@@ -100,7 +100,7 @@ class UserResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-# ---------- Admin List Response ----------
+#  Admin List Response 
 class UserAdminListResponse(BaseModel):
     """Minimal user info for admin listings"""
     model_config = ConfigDict(from_attributes=True)
@@ -109,7 +109,7 @@ class UserAdminListResponse(BaseModel):
     status: UserStatus
     created_at: datetime
 
-# ---------- Admin Detail Response ----------
+#  Admin Detail Response 
 class UserAdminDetailResponse(BaseModel):
     """Complete user information when admin views specific user"""
     model_config = ConfigDict(from_attributes=True)
@@ -121,7 +121,7 @@ class UserAdminDetailResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-# ---------- Register Request Schema ----------
+#Register Request Schema
 class UserRegisterRequest(BaseModel):
     email: EmailStr
     phone: PhoneNumber

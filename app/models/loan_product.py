@@ -46,7 +46,7 @@ class LoanProduct(Base, AuditMixin):
     min_interest_rate = Column(Numeric(5, 2), nullable=False)  # e.g., 5.5%
     max_interest_rate = Column(Numeric(5, 2), nullable=False)  # e.g., 15.5%
 
-    # ========== REPAYMENT CONFIG ==========
+    #  REPAYMENT CONFIG
     repayment_frequency = Column(SQLEnum(RepaymentFrequency), nullable=False, default=RepaymentFrequency.MONTHLY)
     repayment_day_source = Column(SQLEnum(RepaymentDaySource), nullable=False, default=RepaymentDaySource.DISBURSEMENT_DATE)
     grace_period_days = Column(Integer, nullable=False, default=3)

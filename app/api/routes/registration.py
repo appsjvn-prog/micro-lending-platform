@@ -19,7 +19,7 @@ def register(
     user: UserRegisterRequest,
     db: Session = Depends(get_db)
 ):
-    """Step 1: Register with email and phone - BOTH REQUIRED """
+    """Step 1: Register with email and phone"""
 
     # 1.Check if user trying to create admin
     if user.role == UserRole.ADMIN:

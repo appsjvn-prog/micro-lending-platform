@@ -13,7 +13,7 @@ from app.core.security import create_access_token
 from app.core.timezone import utc_now
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_borrower(db):
@@ -125,7 +125,7 @@ def admin_auth_headers(test_admin):
     return {"Authorization": f"Bearer {token}"}
 
 
-# ============== TESTS ==============
+#  TESTS 
 
 def test_get_loans_as_borrower(client, test_loan, borrower_auth_headers):
     """Test borrower can view their loans"""

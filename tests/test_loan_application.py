@@ -14,7 +14,7 @@ from app.core.security import get_password_hash, create_access_token
 from app.core.timezone import utc_now
 
 
-# ============== FIXTURES ==============
+#  FIXTURES 
 
 @pytest.fixture
 def test_borrower(db):
@@ -144,7 +144,7 @@ def sample_application_data(test_loan_offer):
     }
 
 
-# ============== TEST CREATE ==============
+#  TEST CREATE 
 
 def test_create_application_success(client, test_user_profile, test_borrower_profile, borrower_auth_headers, sample_application_data):
     response = client.post("/loan-applications", headers=borrower_auth_headers, json=sample_application_data)
@@ -191,7 +191,7 @@ def test_create_application_as_lender(client, lender_auth_headers, sample_applic
     assert response.status_code == 403
 
 
-# ============== TEST GET ==============
+#  TEST GET 
 
 def test_get_borrower_applications(client, test_user_profile, test_borrower_profile, borrower_auth_headers, sample_application_data):
     client.post("/loan-applications", headers=borrower_auth_headers, json=sample_application_data)
@@ -209,7 +209,7 @@ def test_get_lender_applications(client, test_user_profile, test_borrower_profil
     assert len(data) >= 1
 
 
-# ============== TEST UPDATE ==============
+#  TEST UPDATE 
 
 def test_update_application_success(client, test_user_profile, test_borrower_profile, borrower_auth_headers, sample_application_data):
     create_response = client.post("/loan-applications", headers=borrower_auth_headers, json=sample_application_data)
@@ -228,7 +228,7 @@ def test_update_application_not_found(client, borrower_auth_headers):
     assert response.status_code == 404
 
 
-# ============== TEST REVIEW ==============
+#  TEST REVIEW 
 
 def test_review_application_accept(client, test_user_profile, test_borrower_profile, borrower_auth_headers, lender_auth_headers, sample_application_data, db):
     create_response = client.post("/loan-applications", headers=borrower_auth_headers, json=sample_application_data)
@@ -283,7 +283,7 @@ def test_review_application_not_found(client, lender_auth_headers):
     assert response.status_code == 404
 
 
-# ============== TEST CANCEL ==============
+#  TEST CANCEL 
 
 def test_cancel_application_success(client, test_user_profile, test_borrower_profile, borrower_auth_headers, sample_application_data):
     create_response = client.post("/loan-applications", headers=borrower_auth_headers, json=sample_application_data)
@@ -308,7 +308,7 @@ def test_cancel_application_already_reviewed(client, test_user_profile, test_bor
     assert response.status_code in [400, 403]
 
 
-# ============== TEST UNAUTHORIZED ==============
+#  TEST UNAUTHORIZED 
 
 def test_unauthorized_access_no_token(client):
     response_post = client.post("/loan-applications", json={})

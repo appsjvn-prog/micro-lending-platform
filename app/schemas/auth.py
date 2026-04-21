@@ -1,19 +1,14 @@
-"""
-🔜 WEEK 3 FEATURE - Authentication & OTP
-This module is part of the authentication flow.
-Not required for Week 2 deliverables (Bank Accounts & Loan Products).
-Kept for implementation in Week 3.
-"""
+
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from uuid import UUID
 
-# ---------- Login Request ----------
+#  Login Request 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8)
 
-# ---------- Token Response ----------
+#  Token Response 
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -21,10 +16,10 @@ class TokenResponse(BaseModel):
     user_id: UUID
     role: str
 
-# ---------- Refresh Token Request ----------
+# Refresh Token Request 
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
-# ---------- Token Data (internal) ----------
+# Token Data (internal) 
 class TokenData(BaseModel):
     user_id: Optional[str] = None

@@ -5,12 +5,7 @@ from typing import Optional, List
 from decimal import Decimal
 from enum import Enum
 
-class RepaymentStatus(str, Enum):
-    PENDING = "PENDING"
-    PARTIALLY_PAID = "PARTIALLY_PAID"
-    PAID = "PAID"
-    PAID_LATE = "PAID_LATE"
-    OVERDUE = "OVERDUE"
+from app.models.repayment_schedule import RepaymentStatus
     
 
 class RepaymentScheduleResponse(BaseModel):

@@ -1,6 +1,4 @@
-"""
-🔜 WEEK 3 FEATURE - OTP Verification Routes
-"""
+
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, status
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -76,7 +74,7 @@ async def verify_otp(
         temp_token = create_temp_token(
             data={"sub": str(user.id), "purpose": "password_setup"}
         )
-        print(f"🔑 Temp token generated")
+        print(f" Temp token generated")
     
     return OTPVerifyResponse(
         verified=True,

@@ -5,7 +5,8 @@ from typing import Optional
 
 from app.models.lender_profile import RiskAppetite, LenderStatus
 from app.models.borrower_profile import EmploymentType
-# ---------- Create/Update Schemas (Input) ----------
+
+# Create/Update Schemas (Input) 
 class LenderProfileBase(BaseModel):
     """What user submits when creating/updating profile"""
     profile_name: str = Field(..., max_length=100)
@@ -21,7 +22,7 @@ class LenderProfileUpdate(BaseModel):
     business_type: Optional[str] = Field(None, max_length=50)
     risk_appetite: Optional[RiskAppetite] = None
 
-# ---------- Standard Response (for most operations) ----------
+#  Standard Response (for most operations)
 class LenderProfileResponse(BaseModel):
     """Standard lender profile response"""
     id: UUID
@@ -37,7 +38,7 @@ class LenderProfileResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# ---------- Minimal Response (for POST) ----------
+# Minimal Response (for POST) 
 class LenderProfileMinimalResponse(BaseModel):
     """What user sees after create/update"""
     id: UUID
@@ -50,7 +51,7 @@ class LenderProfileMinimalResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# ---------- Self View (what lender sees) ----------
+#  Self View (what lender sees) 
 class LenderProfileSelfResponse(BaseModel):
     """Lender sees their own profile"""
     id: UUID
@@ -65,7 +66,7 @@ class LenderProfileSelfResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# ---------- Admin Response (full details) ----------
+# Admin Response (full details) 
 class LenderProfileAdminResponse(BaseModel):
     """Admin view - includes all fields"""
     id: UUID

@@ -5,7 +5,7 @@ from uuid import UUID
 
 from app.models.bank_account import AccountType
 
-# ---------- Base Schema ----------
+# Base Schema
 class BankAccountBase(BaseModel):
     """Base schema for bank account"""
     bank_name: str = Field(..., min_length=2, max_length=100)
@@ -15,11 +15,11 @@ class BankAccountBase(BaseModel):
     ifsc_code: str = Field(..., pattern=r'^[A-Z]{4}0[A-Z0-9]{6}$', description="IFSC code format: HDFC0001234")
     is_primary: bool = False
 
-# ---------- Create Schema ----------
+#  Create Schema 
 class BankAccountCreate(BankAccountBase):
     """Schema for creating a new bank account"""
     pass  # Inherits all fields from Base
-# ---------- Update Schema ----------
+#  Update Schema 
 class BankAccountUpdate(BaseModel):
     """Schema for updating bank account - only updatable fields"""
     bank_name: Optional[str] = Field(None, min_length=2, max_length=100, description="Bank name")
@@ -39,7 +39,7 @@ class BankAccountCreateResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-# ---------- Response Schema ----------
+#  Response Schema 
 class BankAccountResponse(BankAccountBase):
     """Schema for bank account data sent to client"""
     model_config = ConfigDict(from_attributes=True)
@@ -49,7 +49,7 @@ class BankAccountResponse(BankAccountBase):
     created_at: datetime
     updated_at: datetime 
 
-# ---------- Verification Schema ----------
+#  Verification Schema 
 class BankAccountVerify(BaseModel):
     """Schema for verifying bank account"""
     verification_method: str = Field(..., pattern=r'^(PENNY_DROP|BANK_API|MANUAL)$')

@@ -7,11 +7,11 @@ LOCAL_TIMEZONE = timezone.utc  # Default to UTC
 # from zoneinfo import ZoneInfo
 # LOCAL_TIMEZONE = ZoneInfo("Asia/Kolkata")
 
-# ============== CORE TIME FUNCTIONS ==============
+# CORE TIME FUNCTIONS 
 
 def utc_now() -> datetime:
     """
-    Get current UTC time (for database storage)
+    Get current UTC time 
 
     """
     return datetime.now(timezone.utc)
